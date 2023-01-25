@@ -16,7 +16,7 @@ Set up your working directory. This is the path of the folder in which you
 save all your files. 
 */ 
 
-cd "/Users/gustaf/Downloads/Stata/Assignment 1"
+cd "/Users/gustaf/Documents/GitHub/EFI301-Assignments/Assignment 1"
 
 
 // Clear memory, i.e., erase data that is alreday loaded.
@@ -27,7 +27,7 @@ Open the data set you want to work with
 (path relative to your working directory).
  <<Due to extreme sandboxing entire path is needed for me>> 
 */
-use "/Users/gustaf/Downloads/Stata/Assignment 1/ cps.dta "
+use cps.dta
 
 
 // Close running log files, as you can only run one log file at the time. 
