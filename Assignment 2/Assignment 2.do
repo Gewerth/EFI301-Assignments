@@ -16,7 +16,7 @@ Set up your working directory. This is the path of the folder in which you
 save all your files. 
 */ 
 
-cd "/Users/gustaf/Downloads/Stata/Assignment 2"
+cd "/Users/gustaf/Documents/GitHub/EFI301-Assignments/Assignment 2"
 
 
 // Clear memory, i.e., erase data that is alreday loaded.
