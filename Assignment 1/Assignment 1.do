@@ -118,9 +118,10 @@ H0 : B4=B5=B6=0
 Om offekten av att bo i midwest, söder eller west har noll effekt på lön, så är det insignifikanta. */
 
 	/*Fråga 3*/
-
-gen df1 = the number of different groups - 1
-gen df2 = sample size - the number of different groups 
+gen obsnum =_n
+gen k = the number of different groups
+gen df1 = k - 1
+gen df2 = obsnum - k
 di invF(df1, df2, 0.95)
 
 	/* Fråga 4*/ 
