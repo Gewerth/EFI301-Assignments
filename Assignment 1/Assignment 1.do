@@ -134,6 +134,9 @@ test midwest west south
 reg lwage educ exper exper2 midwest west south
 test educ exper exper2 midwest west south 
 
+	/* Fråga 6*/
+	/*Här skriver jag något*/
+
 
 ********************************************************************************
 
