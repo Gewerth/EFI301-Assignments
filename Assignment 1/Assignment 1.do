@@ -3,7 +3,7 @@
 File header. Please fill in with the relevant information - the words in capital letters are placeholders.
 
 
-Name: Gustaf Lewerth, NAME2, NAME3, NAME4
+Name: Gustaf Lewerth, Sebastian Tham. 
 Content: ASSIGNMENT 1, 
 Date: 2023-January-26	
 
@@ -25,7 +25,6 @@ clear all
 /* 
 Open the data set you want to work with 
 (path relative to your working directory).
- <<Due to extreme sandboxing entire path is needed for me>> 
 */
 use cps.dta
 
@@ -49,94 +48,109 @@ Now start your analysis.
 */
 
 /*Problem 2*/
-	/* Fråga 1 */
+	/* Question 1 */
 regress wage educ exper
+	/*every year of education raises the wage by $1.24/H, with a 95% confidence between $1.17/H and $1.31/H. */
 
-	/*Fråga 2 */
-gen lwage = log(wage) /* Detta gör en logaritmerad variant av wage, kallade lwage*/
+	/*Question 2 */
+gen lwage = log(wage) /* This snipet makes a logarithmic version of wage called lwage*/
 
 regress lwage educ exper 
+	/* every year of education raises the income per hour by 11.3%*/
 
-	/* Fråga 3*/
-gen exper2 = exper^2
+	/* Question 3*/
+gen exper2 = exper^2 /* This term may explain that beyond a certain point more education does not emply more earning power*/
 
 regress lwage educ exper exper2
-margins, dydx(exper)
-twoway (scatter exper exper2)
+margins, dydx(exper exper2)
+
+	/* ∂exper = .0390322 
+	   ∂exper2= -.0006602 
+	   
+	   0= 0.030322/0.0006602*x=>x=59.12178 after 59 years of expereince salary decrease*/
+	   
+ gen marginaleffect= 0.0390322*exper - 0.0006602*exper2
+	
+	   
+twoway (scatter exper marginaleffect) /*There are no observations with the amount of experince*/
 
 
 /*Problem 3*/
-	*Fråga 1*/
+	*Question 1*/
+regress lwage educ exper exper2
+/*ST.ER is given in outputt of **regress** as .0000478 */
 
-regress lwage edux exper exper2
-/*ST.ER ges i outputt av **regress** */
-
-	/*Fråga 2*/
+	/*Question 2*/
 reg lwage educ exper exper2
 predict U_hat, residuals
 
 sum U_hat
 corr U_hat educ exper exper2
-/*Vi sparar fel-termen därav att det är lite correlation mellan felterm och allt men mer mellan de övriga framför allt mellan exper och exper2 */
+/*We save the error-term as U_hat. Hence, there is a small corelation between it and all other variables but more between the others especially exper and exper. i.e. Exp(U_hat) != 0  */
 
-	/*Fråga 3 */
+	/*Question 3 */
 twoway (scatter U_hat educ)
-/* Nej, vi anser att det är heteroscedastiskt, då Studneter antagligen har läst olika saker, dvs. att olika utbildningar ger olika framtida livsinkomster. därav är den icke-obseverade termen vara vilken typ av utbildning som studneter har läst, därav ökar inte heller variansen ytterligare efter 15-års utbilndnig vilket ligger i lag med att phD- sellan betalar för sig. */
+/*No, we belive that it is heteroscedastic, beacuse students have probably read diferent subjects, and different educations garner different lifetime incomes, hence the non-observed term is probably what kind of education the studnets have had, therfore the variance doesn't increase after 15 years pointing to exesively long educations not being worth while */
 
-	/*Fråga 4*/
+	/*Question 4*/
 reg lwage educ exper exper2, robust
-/*Ja*/
+/*Yes, slighly*/
 
 /* Problem 4*/
- /*Fråga 1*/
-
+	/*Question 1*/
 reg lwage educ exper exper2, robust
 
 display invnormal(0.95)
-/*Test värdet lämans i **regress** output under kolumnen "t", att mer erfarenhet har mindre effekt på lön desto mer erfarenhet en individ har. T-testet håller, på otroligt liten osäkerhetsnivå */
+/*The test-value is returned in the **regress** output under column "t". The Zero-hyp states that the more experience an individual has, the less effect on salary even more experience has. The T-test is true, on a very large significance level */
 
-	/*Fråga 2 */
-/*  .1016993    .1134744 med robust ///
-    .1018637      .11331 utan robust ///
-	 Vi såg tidigare att det inte är homoscedastiskt, vilket innebär att OLS-4 inte håller, därav blir det skilnad mär man tar det i beaktelse. */
+	/*Question 2 */
+/*  .1016993    .1134744 with robust ///
+    .1018637      .11331 without robust ///
+	We saw previously that it isn't  homoscedastic, which means that OLS-4 doesnät hold, hence there will be some difference when taking this into account and allow for non ronust standard errrors. */
 	 
-	/* Fråga 3 */
+	/* Question 3 */
 regress lwage educ exper exper2, level(90)
 invnormal(0.9)
 
 
 /*Problem 5*/
-	/*Fråga 1*/
+	/*Question 1*/
 reg lwage educ exper exper2 midwest west south
 
-/* B4 = -0.041 "den som bor i midwest har 4.1% lägre lön" 
-   B5 = -0.05  "Den som bor i väst har 5% lägre lön"
-   B6 = -0.104 "Den som bor i söder har 10% lägre lön"
+/* B4 = -0.041 "He who lives in the midwest has 4.1% lower salary" 
+   B5 = -0.05  "He who lives in the west has 5% lower salary"
+   B6 = -0.104 "He who lives in the south has 10% lower salary"
    
-	/*Fråga 2*/
+	/*Question 2*/
 H0 : B4=B5=B6=0
-Om offekten av att bo i midwest, söder eller west har noll effekt på lön, så är det insignifikanta. */
+If the effects of living in the midwest, south and West is zero, then that's insignificant. */
 
-	/*Fråga 3*/
-gen obsnum =_n
-gen k = the number of different groups
+	/*Question 3*/
+gen obsnum =4733
+gen k = 4
 gen df1 = k - 1
 gen df2 = obsnum - k
 di invF(df1, df2, 0.95)
+	/*F(w)= 2.606787)*/
 
-	/* Fråga 4*/ 
+	/* Question 4*/ 
 
 reg lwage educ exper exper2 midwest west south
 test midwest west south 
+	/*F(3,4726)=10.86. This is larger than the answer in Question 3, whihc means that the actual calculated F-value is larger than the critical, hence the zero hypothesis is rejected.*/
       
-	/* Fråga 5 */
+	/* Question 5 */
+
+ di F(df1,df2,1.8)
+ /* p(f=1.8)=0.8551 */
+
+
+	/* Question 6*/
 
 reg lwage educ exper exper2 midwest west south
 test educ exper exper2 midwest west south 
 
-	/* Fråga 6*/
-	/*Här skriver jag något*/
-
+/* F(6, 4726) = 332.53, the calculated  F-value is much larger than al typical significanses of 0.1,0.05,0.01. This means that we ca reject the zero-hypothesis and thereby know that our model is significant, and accuratly describes what affects salary.*/
 
 ********************************************************************************
 
