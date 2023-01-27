@@ -66,13 +66,19 @@ margins, dydx(exper exper2)
 
 	/* ∂exper = .0390322 
 	   ∂exper2= -.0006602 
+	   0 = ∂exper -2* ∂exper2*x => x= 
 	   
-	   0= 0.030322/0.0006602*x=>x=59.12178 after 59 years of expereince salary decrease*/
 	   
- gen marginaleffect= 0.0390322*exper - 0.0006602*exper2
-	
+	   Marginal effects = 0.0390322- 2*0.0006602*x, range(0 50)
 	   
-twoway (scatter exper marginaleffect) /*There are no observations with the amount of experince*/
+ gen marginaleffect= 0.0390322*exper - 0.0006602*exper2      */
+	   
+twoway (scatter exper marginaleffect) 
+
+gen zpoint = 
+
+count if exper >  zpoint
+/*There are no observations with the amount of experince*/
 
 
 /*Problem 3*/
@@ -86,7 +92,7 @@ predict U_hat, residuals
 
 sum U_hat
 corr U_hat educ exper exper2
-/*We save the error-term as U_hat. Hence, there is a small corelation between it and all other variables but more between the others especially exper and exper. i.e. Exp(U_hat) != 0  */
+/*We save the error-term as U_hat. Hence, there is a small corelation between it and all other variables but more between the others especially exper and exper2. i.e. Exp(U_hat) != 0  */
 
 	/*Question 3 */
 twoway (scatter U_hat educ)
@@ -100,26 +106,40 @@ reg lwage educ exper exper2, robust
 	/*Question 1*/
 reg lwage educ exper exper2, robust
 
-display invnormal(0.95)
-/*The test-value is returned in the **regress** output under column "t". The Zero-hyp states that the more experience an individual has, the less effect on salary even more experience has. The T-test is true, on a very large significance level */
+di (- .0006602-0)/.0000498
 
+display invnormal(0.05/2)
+display invnormal(1-(0.05/2))
+/*The test-value is returned in the **regress** output under column "t".
+ The Zero-hyp states that the effect of more experince is the same independent of how much experience the person has. 
+ */
+ 
+display invnormal(0.05/2) /* -1.9596 */
+display invnormal(1-(0.05/2)) /* 1.9596 */
+
+/* Critial region on [- inf, -1.9596] & [1.9596, inf].
+
+reject the null-hypo, ≈-13<≈-2. */
+ 
 	/*Question 2 */
 /*  .1016993    .1134744 with robust ///
     .1018637      .11331 without robust ///
-	We saw previously that it isn't  homoscedastic, which means that OLS-4 doesnät hold, hence there will be some difference when taking this into account and allow for non ronust standard errrors. */
+	We saw previously that it isn't  homoscedastic, which means that OLS-4 doesn't hold, hence there will be some difference when taking this into account and allow for non robust standard errrors. */
 	 
 	/* Question 3 */
-regress lwage educ exper exper2, level(90)
-invnormal(0.9)
+regress lwage educ exper exper2, level(90) /*Easier*/
 
+invnormal(0.95)
+	di 0.1075	-invnormal(0.95)*0.0030031 
+	di 0.1075869+invnormal(0.95)*0.0030031
 
 /*Problem 5*/
 	/*Question 1*/
 reg lwage educ exper exper2 midwest west south
 
-/* B4 = -0.041 "He who lives in the midwest has 4.1% lower salary" 
-   B5 = -0.05  "He who lives in the west has 5% lower salary"
-   B6 = -0.104 "He who lives in the south has 10% lower salary"
+/* B4 = -0.041 "He who lives in the midwest has 4.1% lower salary than north east" 
+   B5 = -0.05  "He who lives in the west has 5% lower salary than north east"
+   B6 = -0.104 "He who lives in the south has 10% lower salary than north east"
    
 	/*Question 2*/
 H0 : B4=B5=B6=0
@@ -127,9 +147,10 @@ If the effects of living in the midwest, south and West is zero, then that's ins
 
 	/*Question 3*/
 gen obsnum =4733
-gen k = 4
-gen df1 = k - 1
-gen df2 = obsnum - k
+gen k = 6
+gen q = 3
+gen df1 = q
+gen df2 = obsnum - k -1 /*4726*/
 di invF(df1, df2, 0.95)
 	/*F(w)= 2.606787)*/
 
@@ -137,20 +158,23 @@ di invF(df1, df2, 0.95)
 
 reg lwage educ exper exper2 midwest west south
 test midwest west south 
-	/*F(3,4726)=10.86. This is larger than the answer in Question 3, whihc means that the actual calculated F-value is larger than the critical, hence the zero hypothesis is rejected.*/
+	/*F(3,4726)=10.86. This is larger than the answer in Question 3, which means that the actual calculated F-value is larger than the critical, hence the zero hypothesis is rejected. The doefisients are jointly significant, it does affect your salary if you live outside the northe east, at least somewhere*/
+	
+	di 1-F(dfq, df2, 10.86) /* Probability of getting an F> F-from test above is very small */
+
+
       
 	/* Question 5 */
 
  di F(df1,df2,1.8)
- /* p(f=1.8)=0.8551 */
-
+ /* p(f=1.8)=0.1449  probability of getting F>1.8 is 14,5%*/
 
 	/* Question 6*/
 
 reg lwage educ exper exper2 midwest west south
 test educ exper exper2 midwest west south 
 
-/* F(6, 4726) = 332.53, the calculated  F-value is much larger than al typical significanses of 0.1,0.05,0.01. This means that we ca reject the zero-hypothesis and thereby know that our model is significant, and accuratly describes what affects salary.*/
+/* F(6, 4726) = 332.53, the calculated  F-value is much larger than al typical significanses of 0.1,0.05,0.01. This means that we ca reject the zero-hypothesis and thereby know that our model has joint significance, and has descriptive poswers of what affects salary.*/
 
 ********************************************************************************
 
