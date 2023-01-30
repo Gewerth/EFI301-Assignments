@@ -49,7 +49,7 @@ Now start your analysis.
 
 /*  Problem 6
 	1.  Consider the following model of demand on a given airline route
-			log(passen) = β0 + β1 log(fare) + U. (1)
+			log(passen) = β0 + β1 log(fare) + U. 					(1)
 		a, Interpret the coefficient β1.
 			if the fare increse by β1 % then the  number of passengers increase  by 1%.  		β1  is  the relation between fare and passengers. 
 		b, Estimate the model. */
@@ -65,16 +65,23 @@ Now start your analysis.
 */
 /*
 	2. Our application here is an example of demand estimation in a many markets framework. What is a market in our application? 
-	 */
+	## The market is the airline market, where buyers, buy seats from airlines. ##*/
 	 
 /*	3. In the model above, we do not control explicitly for the distance between the 	airport of origin and the destination. Suppose that model in problem 6.1 can be rewritten as
-		log(passen) = β0 + β1 log(fare) + β2 log(dist) + V (2)
+		log(passen) = β0 + β1 log(fare) + β2 log(dist) + V 			(2)
 where the demand shock V satisfies the exogeneity assumption
-		E[V | log(fare), log(dist)] = E[V | fare, dist] = 0. (3)
-		a) Rewrite U from equation in problem 6.1 as a function of dist and V .*/
-		
+		E[V | log(fare), log(dist)] = E[V | fare, dist] = 0. 		(3)
+		a) Rewrite U from equation in (1) as a function of dist and V .*/
+		/* 	β0 + β1 log(fare) + U =	 β0 + β1 log(fare) + β2 log(dist) + V		*/
+		/*						U =  β2 log(dist) + V							*/
+		/*						U = 
 /*		b) Use this representation of U to state the exogeneity condition for OLS estima-
 tion of model (1). */
+		Cov(fare, U) = 0 	(I)
+		Cov(passen, U) = 0	(II)
+	Assumption : E[U|fare, passnen] = 0  (III)
+	
+	Using U = inserted into (I) we get Cov(fare, ) =0
 
 /*		c) Is it plausible that this exogeneity assumption is satisfied? Explain.*/
 
