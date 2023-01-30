@@ -56,7 +56,7 @@ Now start your analysis.
 		gen lpas =log(passen)
 		gen lfare =log(fare)
 		regress lpas lfare
-		 /*   lpas | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+/*      lpas | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
 -------------+----------------------------------------------------------------
        lfare |  -.4815181    .063324    -7.60   0.000    -.6057619   -.3572742
        _cons |   8.540983   .3273545    26.09   0.000     7.898703    9.183264
@@ -74,31 +74,57 @@ where the demand shock V satisfies the exogeneity assumption
 		a) Rewrite U from equation in (1) as a function of dist and V .*/
 		/* 	β0 + β1 log(fare) + U =	 β0 + β1 log(fare) + β2 log(dist) + V		*/
 		/*						U =  β2 log(dist) + V							*/
-		/*						U = 
 /*		b) Use this representation of U to state the exogeneity condition for OLS estima-
 tion of model (1). */
-		Cov(fare, U) = 0 	(I)
-		Cov(passen, U) = 0	(II)
-	Assumption : E[U|fare, passnen] = 0  (III)
 	
-	Using U = inserted into (I) we get Cov(fare, ) =0
+	/*	Cov(fare, V) = 0 	(I)
+	Using U = inserted into (I) we get Cov(fare, β2*log(dist) + U)  = -β2* Cov(fare,  log(dist) + cov(fare, U))= β2* Cov(fare, log(dist))=0*/
 
 /*		c) Is it plausible that this exogeneity assumption is satisfied? Explain.*/
+		/* For this to hold, either β2=0 or there is no covariance between fare and distance, the latter is more plausible, however some quick googling finds greater differnece between prices the longer the flights are, indcating that it inprobable that the exogenity assumption is satisfied. 
 
 /*	4. We will now try to sign the bias that we face if the true model is (2) and we estimate β1 by fitting (1) by OLS. You may assume that we have a "large sample".
 		a) Adapt the formula for omitted variable bias to this scenario.*/
+		Cov(log(fare),log(dist))/var(log(fare))*β2 */
 	
 /*		b) What sign do you expect for β2?*/
+		/* We expect that the number of people who fly 10+h flights is smaller than the number of people who fly 2h flights.  Hence we expect β2<0 */
 
-/*		c) What sign do you expect for the covariance between log(fare) and log(dist)? */	
+/*		c) What sign do you expect for the covariance between log(fare) and log(dist)? */
+gen ldist = log(dist)
+correlate lfare ldist, covariance
+		/*After some googleing of aiirfares, we've seen that the variance in price increses the longer the travle is. This would indicate that the covarience is positive.*/
 /*		d) What sign do you expect for the omitted variable bias? */
+		/*since the denumerator is >0 by definition and the nominator is >0 and  β2<0 the OV-bias has a negative sign. */
 
 /*	5. We have data on dist and can estimate (2). Compare the the OLS estimates for the effect of log(fare) from the two models. Is your conjecture about the sign of the omitted variable bias confirmed?*/
+regress lpas lfare
+/*
+----------------------------------------------------------------------------
+        lpas | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+       lfare |  -.4815181    .063324    -7.60   0.000    -.6057619   -.3572742
+       _cons |   8.540983   .3273545    26.09   0.000     7.898703    9.183264
+------------------------------------------------------------------------------
+*/
+
+regress lpas lfare ldist
+/*
+
+   lpas | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+       lfare |  -.6128103   .0776797    -7.89   0.000    -.7652208   -.4603999
+       ldist |   .1424345   .0491188     2.90   0.004     .0460617    .2388073
+       _cons |   8.263681   .3400264    24.30   0.000     7.596537    8.930825
+------------------------------------------------------------------------------
+*/
+/* No, we were wrong about the sign of β2, it was infact ngative. */
 
 /*	6. Verify that the slope coefficient from fitting model (1) by OLS is equal to βˆ + δˆ βˆ,1 log(dist)|log(fare) 2
 where βˆ1 and βˆ2 are the OLS estimates obtained by fitting model (2) and
 δˆ = cdov(log(dist),log(fare)) log(dist)|log(fare) vcar(log(fare))
 is the slope coefficient from a regression of log(dist) on log(fare). */
+
 
 
 /*Problem 7 
