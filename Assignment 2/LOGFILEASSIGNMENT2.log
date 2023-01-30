@@ -1,0 +1,45 @@
+--------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/gustaf/Documents/GitHub/EFI301-Assignments/Assignment 2/LOGFILEASSIGNMEN
+> T2.log
+  log type:  text
+ opened on:  30 Jan 2023, 15:12:20
+
+. 
+end of do-file
+
+. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD19987.000000"
+
+.                 gen lpas =log(passen)
+
+. 
+end of do-file
+
+. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD19987.000000"
+
+.                 gen lfare =log(fare)
+
+. 
+end of do-file
+
+. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD19987.000000"
+
+.                 regress lpas lfare
+
+      Source |       SS           df       MS      Number of obs   =     1,149
+-------------+----------------------------------   F(1, 1147)      =     57.82
+       Model |  46.2934836         1  46.2934836   Prob > F        =    0.0000
+    Residual |  918.321147     1,147  .800628725   R-squared       =    0.0480
+-------------+----------------------------------   Adj R-squared   =    0.0472
+       Total |  964.614631     1,148  .840256647   Root MSE        =    .89478
+
+------------------------------------------------------------------------------
+        lpas | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+       lfare |  -.4815181    .063324    -7.60   0.000    -.6057619   -.3572742
+       _cons |   8.540983   .3273545    26.09   0.000     7.898703    9.183264
+------------------------------------------------------------------------------
+
+. 
+end of do-file
+
