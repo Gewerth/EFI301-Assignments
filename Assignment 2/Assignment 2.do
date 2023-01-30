@@ -53,9 +53,9 @@ Now start your analysis.
 		a, Interpret the coefficient β1.
 			if the fare increse by β1 % then the  number of passengers increase  by 1%.  		β1  is  the relation between fare and passengers. 
 		b, Estimate the model. */
-		gen lpas =log(passen)
+		gen lpassen =log(passen)
 		gen lfare =log(fare)
-		regress lpas lfare
+		regress lpassen lfare
 /*      lpas | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
 -------------+----------------------------------------------------------------
        lfare |  -.4815181    .063324    -7.60   0.000    -.6057619   -.3572742
@@ -98,7 +98,7 @@ correlate lfare ldist, covariance
 		/*since the denumerator is >0 by definition and the nominator is >0 and  β2<0 the OV-bias has a negative sign. */
 
 /*	5. We have data on dist and can estimate (2). Compare the the OLS estimates for the effect of log(fare) from the two models. Is your conjecture about the sign of the omitted variable bias confirmed?*/
-regress lpas lfare
+regress lpassen lfare
 /*
 ----------------------------------------------------------------------------
         lpas | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
@@ -108,7 +108,7 @@ regress lpas lfare
 ------------------------------------------------------------------------------
 */
 
-regress lpas lfare ldist
+regress lpassen lfare ldist
 /*
 
    lpas | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
@@ -120,20 +120,48 @@ regress lpas lfare ldist
 */
 /* No, we were wrong about the sign of β2, it was infact ngative. */
 
-/*	6. Verify that the slope coefficient from fitting model (1) by OLS is equal to βˆ + δˆ βˆ,1 log(dist)|log(fare) 2
+/*	6. Verify that the slope coefficient from fitting model (1) by OLS is equal to
+					βˆ1ˆ + δˆ log(dist)|log(fare) βˆ2^			(III)
 where βˆ1 and βˆ2 are the OLS estimates obtained by fitting model (2) and
-δˆ = cdov(log(dist),log(fare)) log(dist)|log(fare) vcar(log(fare))
+				δˆ log(dist)|log(fare) = cov(log(dist),log(fare))/ Var^(log(fare)) 
 is the slope coefficient from a regression of log(dist) on log(fare). */
 
+/* From model 1 we get βˆ1= -.4815181 there are no more coeffisients. i.e βˆ1 is the slope coeficient. 
+ Model 2 gives us βˆ1 = -.6128103 and βˆ2 = .1424345
+*/ 
+correlate ldist lfar, covariance
+/*             |    ldist    lfare
+-------------+------------------
+       ldist |  .434984
+       lfare |  .160316  .173921
+	   */
+
+tabstat lfare, s(variance)
+/*
+    Variable |  Variance
+-------------+----------
+       lfare |  .1739213
+------------------------
+*/
+ 
+di  .160316 / .1739213 /* =.92177324*/
+
+/* Thus, the expression (III) becomes  -.4815181 + .92177324 * .1424345 = -.35022579*/
+di -.4815181 + .92177324 * .1424345
+
+ /*βˆ1 i.e the slope coefficient from model (1) fitted by OLS is not equal to -.35022579. */
 
 
 /*Problem 7 
 For this problem we continue to use the data from Problem 6. */
 /*	1. Generate new variables lpassen, lfare and ldist for logged passen, fare and
 dist, respectively (if you haven't done so already).*/
+ 
+/* Done previously */
 
 /*	2. Fares for air travel are determined in a competitive market by the laws of supply and demand. Explain intuitively why this renders the exogeneity assumption (3) implausible.*/
-
+	
+		/* Fares are in the market the result of suply and demand.  We can express the demanded quantity as a linear function alpa_0 - alpha_1*p and suplied quantity as a function eta_0 +eta_a*p  where p is price, var_0 is amount produced and consumed when the price is 0, and var_1 is the increase in quantity produced/demanded if the price increased by 1. We know from economics that for every price only one possible number of products are exchanged. Thus eta_0 +eta_a*p = alpa_0 - alpha_1*p. To this model, we intorduce a rapid change in demand, we call it u, thus  eta_0 +eta_a*p = alpa_0 - alpha_1*p +u. We have now spotted a feed-back loop, the demanded quantity is dependent on this chock i.e if there is a rapid change in price, the demand and suply change is dependent on the price. Thus we can learn somthing about the dependent variable from the independent ones    */
  
 /*	3. The data set "airconc00.dta" contains for each route the variable bmktshr which gives the market share of the airline with the largest market share on this route. This is a measure of the concentration of market power on a given route.*/
 
