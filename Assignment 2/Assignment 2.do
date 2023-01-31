@@ -3,7 +3,7 @@
 File header. Please fill in with the relevant information - the words in capital letters are placeholders.
 
 
-Name: Gustaf Lewerth, NAME2, NAME3, NAME4
+Name: Gustaf Lewerth, NAME2,
 Content: ASSIGNMENT 2, 
 Date: 2023-Februari-DAY	
 
@@ -191,19 +191,35 @@ dist, respectively (if you haven't done so already).*/
 /*	5. We want to estimate the structural equation (2) by instrumental variable regression.*/
 /*		a) State the instrument relevance condition for using bmtshr as an instrument for lfare. Hint: The structural equation contains a control variable!*/
 
+	/* log(passen) = β0 + β1 log(fare) + β2 log(dist) + V 	(2)	
+		TThe instrument relevance condition is Cov(Z_1, X_1)!=0 Z_1 where Z_1 is bmtshr and lfare is X_1 this gives Cov(bmtshr, lfare) != 0 */
+		
 /*		b) Do you expect it to be satisfied? Explain.*/
+	
+	/*Yes, we expect that the larger dominance an actor has on a market, the hifgher the pices will be, from the argument in 3.a. */
 
-/*		c) Run the first stage and use the regression output to conduct a statistical test
-of the instrument relevance condition (α = 0.05). */
+/*		c) Run the first stage and use the regression output to conduct a statistical test of the instrument relevance condition (α = 0.05). */
+
+regress lfare bmktshr 
+ 
+ /*  lfare | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+     bmktshr |  -.4722088   .0609252    -7.75   0.000    -.5917461   -.3526715
+       _cons |   5.436751   .0385649   140.98   0.000     5.361085    5.512416
+------------------------------------------------------------------------------ */
+ 
+ /*Since H_0: bmktshr=0 is outside of the 95% confidence interval, we reject h_0 which emplies that the instrument is relevant */
+
 
 /*		d) Now we want to develop a hypothetical setting in which the instrument
-relevance assumption is not satisfied and in which we still have cov(bmtshr, log(fare)) ̸= 0.
-Assume that passengers are willing to spend more money the longer the distance travelled. What would the joint distribution of log(dist) and bmtshr have to look like to ensure that that
+relevance assumption is not satisfied and in which we still have cov(bmtshr, log(fare))!= 0. Assume that passengers are willing to spend more money the longer the distance travelled. What would the joint distribution of log(dist) and bmtshr have to look like to ensure that that
     cov(bmtshr, log(fare)) < 0. */
-	
+		/* This would mean that more dominance of an actor on a route the less variance in price, since we already have that cor(lfare, ldist)>0 we would also have that cor(bmtshr, ldist)<0,  thus there would have to be more competition on longer flights, since these are the ones with larger fares.   */
+		
 /*	6. */
 /*		a) State the appropriate instrument exogeneity assumption.*/
-	
+		/*E[U|Z_1, X_1, ... X_k]=0
+		  E[U|bmktshr]        */
 /*		b) Do you expect it to be satisfied? Explain.*/
 
 

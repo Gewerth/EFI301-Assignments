@@ -1,9 +1,9 @@
---------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------
       name:  <unnamed>
-       log:  /Users/gustaf/Documents/GitHub/EFI301-Assignments/Assignment 2/LOGFILEASSIGNMEN
-> T2.log
+       log:  /Users/gustaf/Documents/GitHub/EFI301-Assignments/Assignment 2/LOGFIL
+> EASSIGNMENT2.log
   log type:  text
- opened on:  30 Jan 2023, 18:21:06
+ opened on:  31 Jan 2023, 18:39:30
 
 . 
 . ********************************************************************************
@@ -16,17 +16,18 @@
 . 
 . /*  Problem 6
 >         1.  Consider the following model of demand on a given airline route
->                         log(passen) = β0 + β1 log(fare) + U.                              
->     (1)
+>                         log(passen) = β0 + β1 log(fare) + U.                    
+>               (1)
 >                 a, Interpret the coefficient β1.
->                         if the fare increse by β1 % then the  number of passengers increas
-> e  by 1%.            β1  is  the relation between fare and passengers. 
+>                         if the fare increse by β1 % then the  number of passenge
+> rs increase  by 1%.            β1  is  the relation between fare and passengers.
+>  
 >                 b, Estimate the model. */
-.                 gen lpas =log(passen)
+.                 gen lpassen =log(passen)
 
 .                 gen lfare =log(fare)
 
-.                 regress lpas lfare
+.                 regress lpassen lfare
 
       Source |       SS           df       MS      Number of obs   =     1,149
 -------------+----------------------------------   F(1, 1147)      =     57.82
@@ -36,7 +37,7 @@
        Total |  964.614631     1,148  .840256647   Root MSE        =    .89478
 
 ------------------------------------------------------------------------------
-        lpas | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+     lpassen | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
 -------------+----------------------------------------------------------------
        lfare |  -.4815181    .063324    -7.60   0.000    -.6057619   -.3572742
        _cons |   8.540983   .3273545    26.09   0.000     7.898703    9.183264
@@ -50,47 +51,53 @@
 >                 
 > */
 . /*
->         2. Our application here is an example of demand estimation in a many markets frame
-> work. What is a market in our application? 
->         ## The market is the airline market, where buyers, buy seats from airlines. ##*/
+>         2. Our application here is an example of demand estimation in a many mar
+> kets framework. What is a market in our application? 
+>         ## The market is the airline market, where buyers, buy seats from airlin
+> es. ##*/
 .          
-. /*      3. In the model above, we do not control explicitly for the distance between the  
->       airport of origin and the destination. Suppose that model in problem 6.1 can be rewr
-> itten as
->                 log(passen) = β0 + β1 log(fare) + β2 log(dist) + V                   (2)
+. /*      3. In the model above, we do not control explicitly for the distance bet
+> ween the        airport of origin and the destination. Suppose that model in pro
+> blem 6.1 can be rewritten as
+>                 log(passen) = β0 + β1 log(fare) + β2 log(dist) + V              
+>      (2)
 > where the demand shock V satisfies the exogeneity assumption
->                 E[V | log(fare), log(dist)] = E[V | fare, dist] = 0.            (3)
->                 a) Rewrite U from equation in (1) as a function of dist and V .*/
-.                 /*      β0 + β1 log(fare) + U =        β0 + β1 log(fare) + β2 log(dist) + 
-> V                */
-.                 /*                                              U =  β2 log(dist) + V     
->                                              */
-. /*              b) Use this representation of U to state the exogeneity condition for OLS 
-> estima-
+>                 E[V | log(fare), log(dist)] = E[V | fare, dist] = 0.            
+> (3)
+>                 a) Rewrite U from equation in (1) as a function of dist and V .*
+> /
+.                 /*      β0 + β1 log(fare) + U =        β0 + β1 log(fare) + β2 lo
+> g(dist) + V                */
+.                 /*                                              U =  β2 log(dist
+> ) + V                                                  */
+. /*              b) Use this representation of U to state the exogeneity conditio
+> n for OLS estima-
 > tion of model (1). */
 .         
 .         /*      Cov(fare, V) = 0        (I)
->         Using U = inserted into (I) we get Cov(fare, β2*log(dist) + U)  = -β2* Cov(fare,  
-> log(dist) + cov(fare, U))= β2* Cov(fare, log(dist))=0*/
+>         Using U = inserted into (I) we get Cov(fare, β2*log(dist) + U)  = -β2* C
+> ov(fare,  log(dist) + cov(fare, U))= β2* Cov(fare, log(dist))=0*/
 . 
-. /*              c) Is it plausible that this exogeneity assumption is satisfied? Explain.*
-> /
-.                 /* For this to hold, either β2=0 or there is no covariance between fare an
-> d distance, the latter is more plausible, however some quick googling finds greater differ
-> nece between prices the longer the flights are, indcating that it inprobable that the exog
-> enity assumption is satisfied. 
+. /*              c) Is it plausible that this exogeneity assumption is satisfied?
+>  Explain.*/
+.                 /* For this to hold, either β2=0 or there is no covariance betwe
+> en fare and distance, the latter is more plausible, however some quick googling 
+> finds greater differnece between prices the longer the flights are, indcating th
+> at it inprobable that the exogenity assumption is satisfied. 
 > 
-> /*      4. We will now try to sign the bias that we face if the true model is (2) and we e
-> stimate β1 by fitting (1) by OLS. You may assume that we have a "large sample".
->                 a) Adapt the formula for omitted variable bias to this scenario.*/
+> /*      4. We will now try to sign the bias that we face if the true model is (2
+> ) and we estimate β1 by fitting (1) by OLS. You may assume that we have a "large
+>  sample".
+>                 a) Adapt the formula for omitted variable bias to this scenario.
+> */
 >                 Cov(log(fare),log(dist))/var(log(fare))*β2 */
 .         
 . /*              b) What sign do you expect for β2?*/
-.                 /* We expect that the number of people who fly 10+h flights is smaller tha
-> n the number of people who fly 2h flights.  Hence we expect β2<0 */
+.                 /* We expect that the number of people who fly 10+h flights is s
+> maller than the number of people who fly 2h flights.  Hence we expect β2<0 */
 . 
-. /*              c) What sign do you expect for the covariance between log(fare) and log(di
-> st)? */
+. /*              c) What sign do you expect for the covariance between log(fare) 
+> and log(dist)? */
 . gen ldist = log(dist)
 
 . correlate lfare ldist, covariance
@@ -102,16 +109,17 @@
        ldist |  .160316  .434984
 
 
-.                 /*After some googleing of aiirfares, we've seen that the variance in price
->  increses the longer the travle is. This would indicate that the covarience is positive.*/
+.                 /*After some googleing of aiirfares, we've seen that the varianc
+> e in price increses the longer the travle is. This would indicate that the covar
+> ience is positive.*/
 . /*              d) What sign do you expect for the omitted variable bias? */
-.                 /*since the denumerator is >0 by definition and the nominator is >0 and  β
-> 2<0 the OV-bias has a negative sign. */
+.                 /*since the denumerator is >0 by definition and the nominator is
+>  >0 and  β2<0 the OV-bias has a negative sign. */
 . 
-. /*      5. We have data on dist and can estimate (2). Compare the the OLS estimates for th
-> e effect of log(fare) from the two models. Is your conjecture about the sign of the omitte
-> d variable bias confirmed?*/
-. regress lpas lfare
+. /*      5. We have data on dist and can estimate (2). Compare the the OLS estima
+> tes for the effect of log(fare) from the two models. Is your conjecture about th
+> e sign of the omitted variable bias confirmed?*/
+. regress lpassen lfare
 
       Source |       SS           df       MS      Number of obs   =     1,149
 -------------+----------------------------------   F(1, 1147)      =     57.82
@@ -121,7 +129,7 @@
        Total |  964.614631     1,148  .840256647   Root MSE        =    .89478
 
 ------------------------------------------------------------------------------
-        lpas | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+     lpassen | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
 -------------+----------------------------------------------------------------
        lfare |  -.4815181    .063324    -7.60   0.000    -.6057619   -.3572742
        _cons |   8.540983   .3273545    26.09   0.000     7.898703    9.183264
@@ -136,7 +144,7 @@
 > ------------------------------------------------------------------------------
 > */
 . 
-. regress lpas lfare ldist
+. regress lpassen lfare ldist
 
       Source |       SS           df       MS      Number of obs   =     1,149
 -------------+----------------------------------   F(2, 1146)      =     33.30
@@ -146,7 +154,7 @@
        Total |  964.614631     1,148  .840256647   Root MSE        =     .8919
 
 ------------------------------------------------------------------------------
-        lpas | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+     lpassen | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
 -------------+----------------------------------------------------------------
        lfare |  -.6128103   .0776797    -7.89   0.000    -.7652208   -.4603999
        ldist |   .1424345   .0491188     2.90   0.004     .0460617    .2388073
@@ -164,126 +172,213 @@
 > */
 . /* No, we were wrong about the sign of β2, it was infact ngative. */
 . 
-. /*      6. Verify that the slope coefficient from fitting model (1) by OLS is equal to βˆ 
-> + δˆ βˆ,1 log(dist)|log(fare) 2
+. /*      6. Verify that the slope coefficient from fitting model (1) by OLS is eq
+> ual to
+>                                         βˆ1ˆ + δˆ log(dist)|log(fare) βˆ2^      
+>                  (III)
 > where βˆ1 and βˆ2 are the OLS estimates obtained by fitting model (2) and
-> δˆ = cdov(log(dist),log(fare)) log(dist)|log(fare) vcar(log(fare))
+>                                 δˆ log(dist)|log(fare) = cov(log(dist),log(fare)
+> )/ Var^(log(fare)) 
 > is the slope coefficient from a regression of log(dist) on log(fare). */
+. 
+. /* From model 1 we get βˆ1= -.4815181 there are no more coeffisients. i.e βˆ1 is
+>  the slope coeficient. 
+>  Model 2 gives us βˆ1 = -.6128103 and βˆ2 = .1424345
+> */ 
+. correlate ldist lfar, covariance
+(obs=1,149)
+
+             |    ldist    lfare
+-------------+------------------
+       ldist |  .434984
+       lfare |  .160316  .173921
+
+
+. /*             |    ldist    lfare
+> -------------+------------------
+>        ldist |  .434984
+>        lfare |  .160316  .173921
+>            */
+. 
+. tabstat lfare, s(variance)
+
+    Variable |  Variance
+-------------+----------
+       lfare |  .1739213
+------------------------
+
+. /*
+>     Variable |  Variance
+> -------------+----------
+>        lfare |  .1739213
+> ------------------------
+> */
+.  
+. di  .160316 / .1739213 /* =.92177324*/
+.92177324
+
+. 
+. /* Thus, the expression (III) becomes  -.4815181 + .92177324 * .1424345 = -.3502
+> 2579*/
+. di -.4815181 + .92177324 * .1424345
+-.35022579
+
+. 
+.  /*βˆ1 i.e the slope coefficient from model (1) fitted by OLS is not equal to -.
+> 35022579. */
 . 
 . 
 . /*Problem 7 
 > For this problem we continue to use the data from Problem 6. */
-. /*      1. Generate new variables lpassen, lfare and ldist for logged passen, fare and
+. /*      1. Generate new variables lpassen, lfare and ldist for logged passen, fa
+> re and
 > dist, respectively (if you haven't done so already).*/
-. 
-. /*      2. Fares for air travel are determined in a competitive market by the laws of supp
-> ly and demand. Explain intuitively why this renders the exogeneity assumption (3) implausi
-> ble.*/
-. 
 .  
-. /*      3. The data set "airconc00.dta" contains for each route the variable bmktshr which
->  gives the market share of the airline with the largest market share on this route. This i
-> s a measure of the concentration of market power on a given route.*/
+. /* Done previously */
 . 
-. /*              a) Explain in intuitive terms (drawing from your knowledge of economic the
-> ory) how bmktshr influences the supply side of the market.*/
+. /*      2. Fares for air travel are determined in a competitive market by the la
+> ws of supply and demand. Explain intuitively why this renders the exogeneity ass
+> umption (3) implausible.*/
+.         
+.                 /* Fares are in the market the result of suply and demand.  We c
+> an express the demanded quantity as a linear function alpa_0 - alpha_1*p and sup
+> lied quantity as a function eta_0 +eta_a*p  where p is price, var_0 is amount pr
+> oduced and consumed when the price is 0, and var_1 is the increase in quantity p
+> roduced/demanded if the price increased by 1. We know from economics that for ev
+> ery price only one possible number of products are exchanged. Thus eta_0 +eta_a*
+> p = alpa_0 - alpha_1*p. To this model, we intorduce a rapid change in demand, we
+>  call it u, thus  eta_0 +eta_a*p = alpa_0 - alpha_1*p +u. We have now spotted a 
+> feed-back loop, the demanded quantity is dependent on this chock i.e if there is
+>  a rapid change in price, the demand and suply change is dependent on the price.
+>  Thus we can learn somthing about the dependent variable from the independent on
+> es    */
+.  
+. /*      3. The data set "airconc00.dta" contains for each route the variable bmk
+> tshr which gives the market share of the airline with the largest market share o
+> n this route. This is a measure of the concentration of market power on a given 
+> route.*/
 . 
-. /*              b) Suppose that one carrier stops providing service on a route so that bmk
-> tshr for this route increases. What happens to the supply curve for this route? What happe
-> ns to the ticket price? Is the price change informative about the demand shock?*/
+. /*              a) Explain in intuitive terms (drawing from your knowledge of ec
+> onomic theory) how bmktshr influences the supply side of the market.*/
+.         /*When an actor on the market has monopoly power, he earns price setting
+>  power, ho does this through limiting suply. This maximizes his profit. Thus, la
+> rge bmktshr would emply limited compitition and therfore suply more dependnet on
+>  the profit function of the largest actor.*/
+. 
+. /*              b) Suppose that one carrier stops providing service on a route s
+> o that bmktshr for this route increases. What happens to the supply curve for th
+> is route? What happens to the ticket price? Is the price change informative abou
+> t the demand shock?*/
+.         /* when bmktshr increase, the monopoly power increase, thereby the suply
+>  curve aproximates the proffit curve of the supliers. this will either raise tic
+> ket prices or keep them at the same price. XXXXXXXXXXXXX*/
 . 
 . /*      4. We want to import the variable bmktshr into our dataset. */
-. /*              a) Type help merge to learn about the syntax of the stata command merge.*/
-. 
-. /*              b) Run "merge 1:1 route using airconc00.dta" and explain the meaning of th
-> is command. */
-. 
+. /*              a) Type help merge to learn about the syntax of the stata comman
+> d merge.*/
+.         help merge
+
+. /*              b) Run "merge 1:1 route using airconc00.dta" and explain the mea
+> ning of this command. */
+.         merge 1:1 route using airconc00.dta
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                             0
+    Matched                             1,149  (_merge==3)
+    -----------------------------------------
+
+.         /*We make a joins of the coresponding enteries for the specified variabl
+> e "route" for the file airconc00.dta */
 . /*              c) How does your dataset change? */
+.  /* Result                      Number of obs
+>     -----------------------------------------
+>     Not matched                             0
+>     Matched                             1,149  (_merge==3)
+>     -----------------------------------------*/
+.         /* We've sucesfully added another variable to our dataframe */
 . 
 . /*              d) Why do you have to specify "route"?*/
+.         /* To make a joins you need to specify the target/key(to match to) in st
+> ata that can be either a varlist or as ususal _n if you want a sequential merge.
+>  */  
 . 
-. /*      5. We want to estimate the structural equation (2) by instrumental variable regres
-> sion.*/
-. /*              a) State the instrument relevance condition for using bmtshr as an instrum
-> ent for lfare. Hint: The structural equation contains a control variable!*/
+. /*      5. We want to estimate the structural equation (2) by instrumental varia
+> ble regression.*/
+. /*              a) State the instrument relevance condition for using bmtshr as 
+> an instrument for lfare. Hint: The structural equation contains a control variab
+> le!*/
 . 
+.         /* log(passen) = β0 + β1 log(fare) + β2 log(dist) + V        (2)     
+>                 TThe instrument relevance condition is Cov(Z_1, X_1)!=0 Z_1 wher
+> e Z_1 is bmtshr and lfare is X_1 this gives Cov(bmtshr, lfare) != 0 */
+.                 
 . /*              b) Do you expect it to be satisfied? Explain.*/
+.         
+.         /*Yes, we expect that the larger dominance an actor has on a market, the
+>  hifgher the pices will be, from the argument in 3.a. */
 . 
-. /*              c) Run the first stage and use the regression output to conduct a statisti
-> cal test
-> of the instrument relevance condition (α = 0.05). */
+. /*              c) Run the first stage and use the regression output to conduct 
+> a statistical test of the instrument relevance condition (α = 0.05). */
+. regress lfare bmktshr 
+
+      Source |       SS           df       MS      Number of obs   =     1,149
+-------------+----------------------------------   F(1, 1147)      =     60.07
+       Model |  9.93655147         1  9.93655147   Prob > F        =    0.0000
+    Residual |  189.725098     1,147   .16540985   R-squared       =    0.0498
+-------------+----------------------------------   Adj R-squared   =    0.0489
+       Total |   199.66165     1,148  .173921298   Root MSE        =    .40671
+
+------------------------------------------------------------------------------
+       lfare | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+     bmktshr |  -.4722088   .0609252    -7.75   0.000    -.5917461   -.3526715
+       _cons |   5.436751   .0385649   140.98   0.000     5.361085    5.512416
+------------------------------------------------------------------------------
+
+. ttest bmktshr==0
+
+One-sample t test
+------------------------------------------------------------------------------
+Variable |     Obs        Mean    Std. err.   Std. dev.   [95% conf. interval]
+---------+--------------------------------------------------------------------
+ bmktshr |   1,149    .6015722    .0058124    .1970212    .5901681    .6129762
+------------------------------------------------------------------------------
+    mean = mean(bmktshr)                                          t = 103.4987
+H0: mean = 0                                     Degrees of freedom =     1148
+
+    Ha: mean < 0                 Ha: mean != 0                 Ha: mean > 0
+ Pr(T < t) = 1.0000         Pr(|T| > |t|) = 0.0000          Pr(T > t) = 0.0000
+
 . 
-. /*              d) Now we want to develop a hypothetical setting in which the instrument
-> relevance assumption is not satisfied and in which we still have cov(bmtshr, log(fare)) ̸=
->  0.
-> Assume that passengers are willing to spend more money the longer the distance travelled. 
-> What would the joint distribution of log(dist) and bmtshr have to look like to ensure that
->  that
+. 
+. /*              d) Now we want to develop a hypothetical setting in which the in
+> strument
+> relevance assumption is not satisfied and in which we still have cov(bmtshr, log
+> (fare))!= 0. Assume that passengers are willing to spend more money the longer t
+> he distance travelled. What would the joint distribution of log(dist) and bmtshr
+>  have to look like to ensure that that
 >     cov(bmtshr, log(fare)) < 0. */
 .         
 . /*      6. */
 . /*              a) State the appropriate instrument exogeneity assumption.*/
-.         
-. /*              b) Do you expect it to be satisfied? Explain.*/
-. 
-. 
-. /*      7. Instruments like market share that affect the supply side of the market are cal
-> led "supply shifters". Supply shifters are often used to estimate demand parameters.
-> Explain briefly in intuitive terms*/
-. /*              a) why a supply shifter is a relevant instrument. */
-. 
-. /*              b) under what conditions a supply shifter satisfies the instrument exogene
-> ity assumption.*/
-. 
-. /*      8. The Stata command ivregress computes the IV estimates βˆiv(ω0) and βˆiv(ω0). 12
-> The output of ivregress also reports correct standard errors for the estimated coefficient
-> s. The Stata command to fit the IV regression is
-> ivregress 2sls lpassen ldist (lfare = bmktshr), robust*/
-. /*              a) Run the IV regression and compare the estimated coefficient βˆiv(ω0) to
->  the
-> OLS estimate βˆols(ω0) that we obtained by fitting (2) by OLS. 1 */
-. 
-. /*              b) Give an econometric explanation for the different estimates. */
-. 
-. /*      9. Now we want to compute the IV estimate βˆiv(ω0) by implementing the two-stage
-> least squares (2SLS) protocol. */
-. 
-. /*              a) Run the first-stage regression and store the fitted values from this re
-> gression in a new variable lfare hat. (Hint: use the command predict with the option xb).*
-> /
-. 
-. /*              b) Run the second-stage regression and verify that you get the same estima
-> tes as you get by using the ivregress command.*/
-. 
-. /*              c) Compare the standard errors reported at the second stage to the standar
-> d errors computed by ivregress. Explain. */
-. 
-. 
-. 
-. 
-. 
-. 
-. 
-. 
-. 
-. 
-. 
-. 
-. ********************************************************************************
-. 
-. /* 
-> At the end of the do-file, usually you'd want to save the changed data set 
-> under a different name (don’t overwrite the original file!).
-> */
-. save NEWDATAFILENAME2, replace
-file NEWDATAFILENAME2.dta saved
+.                 E[U|Z_1, X_1, ... X_k]=0
+command E is unrecognized
+r(199);
+
+end of do-file
+
+r(199);
+
+. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD04333.000000"
+
+. test bmktshr==0
+
+ ( 1)  bmktshr = 0
+
+       F(  1,  1147) =   60.07
+            Prob > F =    0.0000
 
 . 
-. // Close the log-file.
-. log close 
-      name:  <unnamed>
-       log:  /Users/gustaf/Documents/GitHub/EFI301-Assignments/Assignment 2/LOGFILEASSIGNMEN
-> T2.log
-  log type:  text
- closed on:  30 Jan 2023, 18:21:06
---------------------------------------------------------------------------------------------
+end of do-file
+
