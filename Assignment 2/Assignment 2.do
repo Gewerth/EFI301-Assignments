@@ -166,17 +166,27 @@ dist, respectively (if you haven't done so already).*/
 /*	3. The data set "airconc00.dta" contains for each route the variable bmktshr which gives the market share of the airline with the largest market share on this route. This is a measure of the concentration of market power on a given route.*/
 
 /*		a) Explain in intuitive terms (drawing from your knowledge of economic theory) how bmktshr influences the supply side of the market.*/
+	/*When an actor on the market has monopoly power, he earns price setting power, ho does this through limiting suply. This maximizes his profit. Thus, large bmktshr would emply limited compitition and therfore suply more dependnet on the profit function of the largest actor.*/
 
 /*		b) Suppose that one carrier stops providing service on a route so that bmktshr for this route increases. What happens to the supply curve for this route? What happens to the ticket price? Is the price change informative about the demand shock?*/
+	/* when bmktshr increase, the monopoly power increase, thereby the suply curve aproximates the proffit curve of the supliers. this will either raise ticket prices or keep them at the same price. XXXXXXXXXXXXX*/
 
 /*	4. We want to import the variable bmktshr into our dataset. */
 /*		a) Type help merge to learn about the syntax of the stata command merge.*/
-
+	help merge
 /*		b) Run "merge 1:1 route using airconc00.dta" and explain the meaning of this command. */
-
+	merge 1:1 route using airconc00.dta
+	/*We make a joins of the coresponding enteries for the specified variable "route" for the file airconc00.dta */
 /*		c) How does your dataset change? */
+ /* Result                      Number of obs
+    -----------------------------------------
+    Not matched                             0
+    Matched                             1,149  (_merge==3)
+    -----------------------------------------*/
+	/* We've sucesfully added another variable to our dataframe */
 
 /*		d) Why do you have to specify "route"?*/
+	/* To make a joins you need to specify the target/key(to match to) in stata that can be either a varlist or as ususal _n if you want a sequential merge. */  
 
 /*	5. We want to estimate the structural equation (2) by instrumental variable regression.*/
 /*		a) State the instrument relevance condition for using bmtshr as an instrument for lfare. Hint: The structural equation contains a control variable!*/
