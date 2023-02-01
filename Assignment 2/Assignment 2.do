@@ -286,7 +286,7 @@ regress lpassen lfare_hat ldist, robust
 
 /*		c) Compare the standard errors reported at the second stage to the standard errors computed by ivregress. Explain. */
 
-/*The asnwet tp the variablity is given in 9.3.5, Simply, our manual regression doesn't take the variability ion the IV -estimator corecctly, and we can't fix it by taking robust standard errors.  */
+/*They are not the same. The reson for the variablity is given in lecture notes 9.3.5, Simply, our manual regression doesn't take the variability ion the IV -estimator corecctly, and we can't fix it by taking robust standard errors.  */
 
 
 
