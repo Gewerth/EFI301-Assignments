@@ -268,6 +268,7 @@ least squares (2SLS) protocol. */
 /*		a) Run the first-stage regression and store the fitted values from this regression in a new variable lfare hat. (Hint: use the command predict with the option xb).*/
 regress lfare bmktshr 
 predict lfare_hat, xb
+
 /*		b) Run the second-stage regression and verify that you get the same estimates as you get by using the ivregress command.*/
 regress lpassen lfare_hat ldist 
 /*------------------------------------------------------------------------------
@@ -278,6 +279,7 @@ regress lpassen lfare_hat ldist
        _cons |  -1.625216   1.598616    -1.02   0.310    -4.761758    1.511327 */
 
 /*No the regression results are not the same, nor even similar. */
+
 /*		c) Compare the standard errors reported at the second stage to the standard errors computed by ivregress. Explain. */
 
 
