@@ -192,7 +192,7 @@ dist, respectively (if you haven't done so already).*/
 /*		a) State the instrument relevance condition for using bmtshr as an instrument for lfare. Hint: The structural equation contains a control variable!*/
 
 	/* log(passen) = β0 + β1 log(fare) + β2 log(dist) + V 	(2)	
-		TThe instrument relevance condition is Cov(Z_1, X_1)!=0 Z_1 where Z_1 is bmtshr and lfare is X_1 this gives Cov(bmtshr, lfare) != 0 */
+		The instrument relevance condition is Cov(Z_1, X_1)!=0, where Z_1 is bmtshr and lfare is X_1 this gives Cov(bmtshr, lfare) != 0 */
 		
 /*		b) Do you expect it to be satisfied? Explain.*/
 	
@@ -226,14 +226,39 @@ relevance assumption is not satisfied and in which we still have cov(bmtshr, log
 /*	7. Instruments like market share that affect the supply side of the market are called "supply shifters". Supply shifters are often used to estimate demand parameters.
 Explain briefly in intuitive terms*/
 /*		a) why a supply shifter is a relevant instrument. */
+	/*Suply shifters move the suply curve verticaly, thus enableing us to find the component that moves in horizontal direction, we besically create the ceteru paribus effect by decomposingthe vector of the suply function into two parts the supply shifter, and the ceteris paribus part*/
 
-/*		b) under what conditions a supply shifter satisfies the instrument exogeneity assumption.*/
+/*		b) under what conditions does a supply shifter satisfies the instrument exogeneity assumption.*/
+	/*The instruments exogenity assumption E[U|Z_1, X_2,..,X_k]=0 is satisfied when Z_1 is uncorelated with the error term, i.e the supply shifter can have no predictive power of the error term. */
 
-/*	8. The Stata command ivregress computes the IV estimates βˆiv(ω0) and βˆiv(ω0). 12
-The output of ivregress also reports correct standard errors for the estimated coefficients. The Stata command to fit the IV regression is
-ivregress 2sls lpassen ldist (lfare = bmktshr), robust*/
-/*		a) Run the IV regression and compare the estimated coefficient βˆiv(ω0) to the
-OLS estimate βˆols(ω0) that we obtained by fitting (2) by OLS. 1 */
+/*	8. The Stata command ivregress computes the IV estimates β_1ˆiv(ω0) and β_2ˆiv(ω0).
+The output of ivregress also reports correct standard errors for the estimated coefficients. The Stata command to fit the IV regression is "ivregress 2sls lpassen ldist (lfare = bmktshr), robust"*/
+
+/*		a) Run the IV regression and compare the estimated coefficient β_1ˆiv(ω0) to the
+OLS estimate β_2ˆols(ω0) that we obtained by fitting (2) by OLS. 1 */
+ivregress 2sls lpassen ldist (lfare = bmktshr), robust
+/*------------------------------------------------------------------------------
+             |               Robust
+     lpassen | Coefficient  std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+       lfare |  -3.307795   .9266881    -3.57   0.000    -5.124071    -1.49152
+       ldist |   1.135688   .3442868     3.30   0.001     .4608979    1.810477
+       _cons |   15.49878   2.539809     6.10   0.000     10.52085    20.47672
+------------------------------------------------------------------------------*/
+
+
+/*		log(passen) = β0 + β1 log(fare) + β2 log(dist) + V 			(2*/
+
+regress lpassen lfare ldist
+/*------------------------------------------------------------------------------
+     lpassen | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+       lfare |  -.6128103   .0776797    -7.89   0.000    -.7652208   -.4603999
+       ldist |   .1424345   .0491188     2.90   0.004     .0460617    .2388073
+       _cons |   8.263681   .3400264    24.30   0.000     7.596537    8.930825
+------------------------------------------------------------------------------*/
+/* We se that B_1^ols =-.6128103 & B_1^IV =-3.307795,
+		  for B_2^ols = .1424345 & B_2^IV =1.135688*/
 
 /*		b) Give an econometric explanation for the different estimates. */
 
@@ -241,9 +266,18 @@ OLS estimate βˆols(ω0) that we obtained by fitting (2) by OLS. 1 */
 least squares (2SLS) protocol. */
 
 /*		a) Run the first-stage regression and store the fitted values from this regression in a new variable lfare hat. (Hint: use the command predict with the option xb).*/
-
+regress lfare bmktshr 
+predict lfare_hat, xb
 /*		b) Run the second-stage regression and verify that you get the same estimates as you get by using the ivregress command.*/
+regress lpassen lfare_hat ldist 
+/*------------------------------------------------------------------------------
+     lpassen | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+   lfare_hat |   1.772124   .3386188     5.23   0.000     1.107741    2.436506
+       ldist |  -.2159496   .0477663    -4.52   0.000    -.3096688   -.1222304
+       _cons |  -1.625216   1.598616    -1.02   0.310    -4.761758    1.511327 */
 
+/*No the regression results are not the same, nor even similar. */
 /*		c) Compare the standard errors reported at the second stage to the standard errors computed by ivregress. Explain. */
 
 
