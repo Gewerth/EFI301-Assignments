@@ -63,23 +63,96 @@ reg lwage cont1-cont2 dummy1-dummy9 if sample==1
 estimates store ols_levels
 reg lwage cont* dummy* interact* if sample==1
 estimates store ols_all
-/* How do we tell Stata to use only the training data when fitting the model? Explain what the wildcard operator (*) does. What does dummy1-dummy9 mean?*/
+/* How do we tell Stata to use only the training data when fitting the model?
+ Explain what the wildcard operator (*) does. 
+ What does dummy1-dummy9 mean?*/
+
+/* By stating that weonly wish to  use the samples, where the label is 1, i.e training.*/
+/* The wildcard "*" represetns one or two carachters, here it's the number at the end ov \textit{varname} */
+/* The "cont1-cont2 dummy1-dummy9" Stipulates which variables should be included, i.e cont1 & cont2 & dummy1 through dummy9. */
 
 /*	3. We will now compute the training error of the two regressions.*/
 lassogof ols_levels ols_all if sample ==1
 /* Which regression has the smaller training error (MSE = mean squared error)? Explain why we could have answered this question even without looking at the data.*/
 
+/*-------------------------------------------------
+       Name |         MSE    R-squared        Obs
+------------+------------------------------------
+ ols_levels |    .8746327       0.0788      1,050
+    ols_all |    .8108753       0.1459      1,050
+-------------------------------------------------
+*/
+
+/*We could have told this simply by realising that the  ols_all model is more complex and would probably have greater precission at the cost of more bias*/
+
 /*	4. We will now compute the test error of the two regressions.*/
 lassogof ols_levels ols_all if sample ==2
 /*Which regression has the smaller test error? Why can a regression have small training error but large test error?*/
 
-/*	5. We now run a Ridge regression and compare it to the OLS regressions.*/
+/*-------------------------------------------------
+       Name |         MSE    R-squared        Obs
+------------+------------------------------------
+ ols_levels |    1.059587       0.0499        450
+    ols_all |    1.186286      -0.0637        450
+-------------------------------------------------*/
+/* The ols_levels model now utperform the ols_all model. We see the effect of overfitting, i.e the model has to many variables with very little information gain, who all increase the bias and therfore makes our accuracy at ooutt of sample data much worse. */
+
+/*	5. We now run a Ridge regression and compare it to the OLS regressions.*/ 
 elasticnet linear lwage cont* dummy* interact* if sample==1, alpha (0) nolog rseed (1223)
+/*-------------------------------------------------------------------------------
+               |                               No. of      Out-of-      CV mean
+               |                              nonzero       sample   prediction
+alpha       ID |     Description      lambda    coef.    R-squared        error
+---------------+---------------------------------------------------------------
+0.000          |
+             1 |    first lambda    205.0223       53      -0.0032     .9524592
+            61 |   lambda before    .7718958       53       0.0523     .8997049
+          * 62 | selected lambda    .7033227       53       0.0524     .8996733
+            63 |    lambda after    .6408415       53       0.0524     .8996781
+           100 |     last lambda    .0205022       53       0.0337     .9173624
+-------------------------------------------------------------------------------*/
+
 estimates store ridge_all
 lassogof ols_all ols_levels ridge_all if sample ==2
 /*Ridge regression uses as many features as the OLS regression that regresses on all features. Why does Ridge regression still perform well on the test sample? (Hint: Shrinkage.)*/
+/*-------------------------------------------------
+       Name |         MSE    R-squared        Obs
+------------+------------------------------------
+    ols_all |    1.186286      -0.0637        450
+ ols_levels |    1.059587       0.0499        450
+  ridge_all |    1.057637       0.0517        450
+-------------------------------------------------*/
+/*Well  you gave it away with the hint, simply, we get all the advantage of having a large and complex model, i.e. high precission, with the benefit of the small and simple model, i.e. less varinace, this makes the modell less overfitted on the training data.*/
+
 
 /* 6. In addition to the Ridge regression above, run a second Ridge regression using only the levels of the predictors. For the two Ridge regressions, compare the lambda values selected by Stata. For which regression do we apply more shrinkage? Is this choice intuitive?*/
+elasticnet linear lwage cont1-cont2 dummy1-dummy9 if sample==1, alpha (0) nolog rseed (1223)
+/*-------------------------------------------------------------------------------
+               |                               No. of      Out-of-      CV mean
+               |                              nonzero       sample   prediction
+alpha       ID |     Description      lambda    coef.    R-squared        error
+---------------+---------------------------------------------------------------
+0.000          |
+             1 |    first lambda     176.418       11      -0.0032     .9524592
+            78 |   lambda before    .1365941       11       0.0561      .896129
+          * 79 | selected lambda    .1244594       11       0.0561     .8961281
+            80 |    lambda after    .1134028       11       0.0561     .8961422
+           100 |     last lambda    .0176418       11       0.0551     .8970955
+-------------------------------------------------------------------------------*/
+/* We see that the lamdas are smaller this time, that makes sense  given that we are  using fewer variables.*/
+
+estimates store ridge_levels
+lassogof ols_all ols_levels ridge_all ridge_levels if sample ==2
+/*-------------------------------------------------
+       Name |         MSE    R-squared        Obs
+------------+------------------------------------
+    ols_all |    1.186286      -0.0637        450
+ ols_levels |    1.059587       0.0499        450
+  ridge_all |    1.057637       0.0517        450
+ridge_levels|    1.056942       0.0523        450
+-------------------------------------------------*/
+/*Even better results!*/
+
 
 /* We now want to look at another penalized regression/shrinkage method, the LASSO (least absolute shrinkage and selection operator). The LASSO solves the following minimization problem
 
