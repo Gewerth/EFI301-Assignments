@@ -1,0 +1,56 @@
+-----------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/gustaf/Documents/GitHub/EFI301-Assignments/Assigment 3/LOGFILEASSIGNM
+> ENT3.log
+  log type:  text
+ opened on:   6 Feb 2023, 14:23:04
+
+. 
+. ********************************************************************************
+. 
+. /*
+> Now start your analysis. 
+> - Clearly label each answer.
+> - for questions that require a text reply give your answer in a comment block.
+> */
+. 
+. /* Problem 8 */
+.         /*1. We start by dividing the sample into a training subsample (70% of sample) 
+> and a testing subsample (30% of sample) by using the following Stata commands. */
+. 
+. splitsample , generate(sample) split(.7 .3) rseed(1223) 
+
+. label define slabel 1 "Training" 2 "Test"
+
+. label values sample slabel
+
+. 
+. /* A new variable has been created. What does this variable indicate? 
+> Convince yourself that we have indeed sorted (at least approximately) 70% of the observ
+> ations into the training subsample and 30% into the test subsample (Hint: Use tabulate*
+> /
+. tabulate twoway
+variable twoway not found
+r(111);
+
+end of do-file
+
+r(111);
+
+. help tabulate
+
+. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw00
+> 00gn/T//SD61383.000000"
+
+. tabulate sample
+
+     sample |      Freq.     Percent        Cum.
+------------+-----------------------------------
+   Training |      1,050       70.00       70.00
+       Test |        450       30.00      100.00
+------------+-----------------------------------
+      Total |      1,500      100.00
+
+. 
+end of do-file
+

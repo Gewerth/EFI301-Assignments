@@ -3,7 +3,7 @@
 File header. Please fill in with the relevant information - the words in capital letters are placeholders.
 
 
-Name: Gustaf Lewerth, NAME2, NAME3, NAME4
+Name: Gustaf Lewerth, NAME2.
 Content: ASSIGNMENT 3, 
 Date: 2023-Februari-DAY	
 
@@ -26,7 +26,7 @@ clear all
 Open the data set you want to work with 
 (path relative to your working directory).
 */
-use cps_big_dat.dta
+use cps_big_data.dta
 
 
 // Close running log files, as you can only run one log file at the time. 
@@ -56,6 +56,7 @@ label values sample slabel
 
 /* A new variable has been created. What does this variable indicate? 
 Convince yourself that we have indeed sorted (at least approximately) 70% of the observations into the training subsample and 30% into the test subsample (Hint: Use tabulate*/
+tabulate sample
 
 /*	2. We first run an OLS regression on the levels of the continuous and the dummy variables using only the training data. We use the estimates store command to remember fitted regression models (Don't worry about the details here). */
 reg lwage cont1-cont2 dummy1-dummy9 if sample==1 
