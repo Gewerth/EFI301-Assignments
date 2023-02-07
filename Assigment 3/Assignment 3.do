@@ -224,7 +224,7 @@ use ts_minwage.dta
 gen date = ym(year, month)
 label variable date "date in year-month format"
 /*Open the data editor and check how the date is encoded. How are the numbers in date supposed to be interpreted? (Hint: help datetime). How would you advance all dates by one year? For the convenience of humans who look at the data, prettify how the date is displayed.*/
-help datetime
+/*help datetime*/
 /*The time is displayed relative to january 1960, i.e botth in positive and negative time...  */
 format date %tm
 /*Look again at date. What has changed?*/
@@ -237,31 +237,80 @@ twoway line lemp_foot date, saving(emp, replace)
 twoway line lminwage date, saving(minwage, replace)
 gr combine emp.gph minwage.gph, col(1) iscale(1)
 /*Do the time series exhibit (stochastic) trends?*/
+/* Yes, first plot has a negative derivative, and the second plot has a positive derivative */
 
 /*	4. We now use */
 tsset date
 /*to tell Stata that we are using a time series and that date is the time index. This will allow us to use special commands such as the D. operator to refer to first differences and the L. operator to refer to lagged values. For example we can write L.lminwage to refer to the lagged values (i.e. the previous period's value) of lminwage.
 */
 
-/*	5. Compute the correlation between lemp foot and the lagged value of lminwage (Hint: use the command cor and the L. operator). If we are interested in predicting the level of the minimum wage based on employment, why would we look at the correlation of employment with the lagged minimum wage rather than the
+/*	5. Compute the correlation between lemp_foot and the lagged value of lminwage (Hint: use the command cor and the L. operator). If we are interested in predicting the level of the minimum wage based on employment, why would we look at the correlation of employment with the lagged minimum wage rather than the
 contemporaneous (i.e. current period) minimum wage? (Hint: monthly data).*/
+
+correlate lemp_foot l.lminwage 
+/*
+             |                 L.
+             | lemp_f~t lminwage
+-------------+------------------
+   lemp_foot |   1.0000
+    lminwage |
+         L1. |  -0.8653   1.0000*/
+
+/* When employments are made, it's depending on salary at time of employment, i.e time before employment is made. An increases in wage will reduce the demand for employees, thus an increase in salary also increses suply of employees. Not the other way around, thus there is a time delay between wage and employment   */
 
 /*	6. Explain the notion of a "spurious correlation" in the presence of trending time*/
 
+/*  ##TO DO## */
+
 /*	7. From now on we consider first differences. This gets rid of trends and hopefully is a first step towards making our time series stationary. Plot the first difference D.lemp foot against time.*/
+twoway tsline D.lemp_foot
 
 /*	8. Labor markets often exhibit systematic fluctuations over the course of a year. This is called seasonality. We remove the seasonal component from the employment time series by using the following code.*/
 tab month , gen(m)
 reg D.lemp_foot m2-m12
 predict d_lemp_foot_adj , residuals
-/*What does the first line of this piece of code do? The time series d lemp foot adj is called seasonally adjusted. Explain why the seasonally adjusted time series has no seasonal component (i.e. it will not exhibit a predictable pattern of variation over the course of a year). From now on, we will use the seasonally adjusted time series. Explain why a time series with a seasonal component cannot be stationary.
+/*What does the first line of this piece of code do?
+ The time series d lemp_foot adj is called seasonally adjusted.
+ Explain why the seasonally adjusted time series has no seasonal component 
+ (i.e. it will not exhibit a predictable pattern of variation over the course of a year). 
+ From now on, we will use the seasonally adjusted time series. 
+ Explain why a time series with a seasonal component cannot be stationary.
 */
+/*	The first line of this code creates new rows in the data set, with binary values depending on the month, i.e if row m1 is true the data is from january etc.
+As the name emplies, sesonaly adjusted time series, has had the sesonal component removed
 
-/*9. Regress d lemp foot adj on the first difference of the lagged minimum wage. Does the minimum wage today predict employment in footwear manufacturing tomorrow
+If a time series has a sesonal component, it is time dependent, thus non-stationary
+	*/
+
+/*9. Regress d_lemp_foot_adj on the first difference of the lagged minimum wage. Does the minimum wage today predict employment in footwear manufacturing tomorrow
 (α = 0.05, robust standard errors)?*/
+regress d_lemp_foot_adj d.l.lminwage, robust
+
+/*
+------------------------------------------------------------------------------
+             |               Robust
+d_lemp_foo~j | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    lminwage |
+         LD. |  -.0062394   .0132559    -0.47   0.638    -.0322723    .0197934
+             |
+       _cons |   9.90e-06   .0007962     0.01   0.990    -.0015538    .0015736
+------------------------------------------------------------------------------*/
+/*	Sadly we have a result within the 95% confidence interval, hence we can't reject the null-hypothesis and say that minwage has an effect */
+
 
 /*	10. Explain why, in a time series context, even (heteroscedasticity) robust standard errors may be incorrect. Compute auto-correlation robust standard errors (Newey- West) by using the following code.*/
 newey d_lemp_foot_adj D.L.lminwage , lag(12)
+/*------------------------------------------------------------------------------
+             |             Newey–West
+d_lemp_foo~j | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    lminwage |
+         LD. |  -.0062394   .0129344    -0.48   0.630    -.0316409    .0191621
+             |
+       _cons |   9.90e-06   .0006682     0.01   0.988    -.0013023    .0013221
+------------------------------------------------------------------------------*/
+
 
 
 /*Problem 10*/
