@@ -175,6 +175,18 @@ elasticnet linear lwage cont* dummy* interact* if sample==1, alpha (1) nolog rse
 estimates store lasso_all
 /*Compare the (estimated) test error of Ridge, LASSO and OLS using all features
 as well as OLS using only the features corresponding to levels.*/
+lassogof ols_all ols_levels ridge_all ridge_levels lasso_all if sample ==2
+/*-------------------------------------------------
+       Name |         MSE    R-squared        Obs
+------------+------------------------------------
+    ols_all |    1.186286      -0.0637        450
+ ols_levels |    1.059587       0.0499        450
+  ridge_all |    1.057637       0.0517        450
+ridge_levels|    1.056942       0.0523        450
+  lasso_all |    1.056924       0.0523        450
+-------------------------------------------------*/
+/* What! lasso_all  is the best model!*/
+
 
 /*	8. Find out which variables were selected by the LASSO by using the following command.*/
 lassocoef , display(coef)
@@ -182,6 +194,24 @@ lassocoef , display(coef)
 	"The variables that are not selected by the LASSO (e.g. cont2 = age and cont2 	square = age2) probably do not have an economic effect on
 (log) wages."
 Explain why this statement is wrong.*/
+/*------------------------
+             | lasso_all
+-------------+----------
+       cont1 |  .0271338
+      dummy2 | -.0387529
+      dummy6 | -.0241366
+      dummy7 | -.0232785
+  interact12 |  .1518034
+  interact18 |   .011654
+  interact21 |  .0246426
+  interact25 |  .0957434
+  interact26 |  .0261598
+       _cons |         0
+------------------------*/
+
+
+/*HERE WE NEED A RESON FOR OUR ANSWER, I DON'T EXACTLY KNOW WHY*/
+
 
 /*Problem 9*/
 clear 
