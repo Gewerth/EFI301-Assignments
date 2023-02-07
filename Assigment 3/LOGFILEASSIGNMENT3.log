@@ -3,34 +3,32 @@
        log:  /Users/gustaf/Documents/GitHub/EFI301-Assignments/Assigment 3/LOGFILEASSIG
 > NMENT3.log
   log type:  text
- opened on:   7 Feb 2023, 13:37:20
+ opened on:   7 Feb 2023, 14:19:27
 
 . 
-end of do-file
-
-. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
-
+. ********************************************************************************
+. 
+. /*
+> Now start your analysis. 
+> - Clearly label each answer.
+> - for questions that require a text reply give your answer in a comment block.
+> */
+. 
+. /* Problem 8 */
+.         /*1. We start by dividing the sample into a training subsample (70% of sample
+> ) and a testing subsample (30% of sample) by using the following Stata commands. */
+. 
 . splitsample , generate(sample) split(.7 .3) rseed(1223) 
 
-. 
-end of do-file
-
-. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
-
 . label define slabel 1 "Training" 2 "Test"
-
-. 
-end of do-file
-
-. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
 
 . label values sample slabel
 
 . 
-end of do-file
-
-. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
-
+. /* A new variable has been created. What does this variable indicate? 
+> Convince yourself that we have indeed sorted (at least approximately) 70% of the obse
+> rvations into the training subsample and 30% into the test subsample (Hint: Use tabul
+> ate*/
 . tabulate sample
 
      sample |      Freq.     Percent        Cum.
@@ -41,10 +39,9 @@ end of do-file
       Total |      1,500      100.00
 
 . 
-end of do-file
-
-. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
-
+. /*      2. We first run an OLS regression on the levels of the continuous and the dum
+> my variables using only the training data. We use the estimates store command to reme
+> mber fitted regression models (Don't worry about the details here). */
 . reg lwage cont1-cont2 dummy1-dummy9 if sample==1 
 
       Source |       SS           df       MS      Number of obs   =     1,050
@@ -71,17 +68,7 @@ end of do-file
        _cons |   .0017033   .0290706     0.06   0.953    -.0553405    .0587471
 ------------------------------------------------------------------------------
 
-. 
-end of do-file
-
-. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
-
 . estimates store ols_levels
-
-. 
-end of do-file
-
-. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
 
 . reg lwage cont* dummy* interact* if sample==1
 
@@ -151,221 +138,81 @@ cont2_square |  -8.864052   2.166809    -4.09   0.000    -13.11609   -4.612018
        _cons |   .0145747   .0291743     0.50   0.617    -.0426753    .0718248
 ------------------------------------------------------------------------------
 
-. 
-end of do-file
-
-. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
-
 . estimates store ols_all
 
-. 
+. /* How do we tell Stata to use only the traini
+
 end of do-file
 
 . do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
 
-. lassogof ols_levels ols_all if sample ==1
+. twoway line lemp_foot date, saving(emp, replace) 
+variable lemp_foot not found
+r(111);
 
-Penalized coefficients
--------------------------------------------------
-       Name |         MSE    R-squared        Obs
-------------+------------------------------------
- ols_levels |    .8746327       0.0788      1,050
-    ols_all |    .8108753       0.1459      1,050
--------------------------------------------------
-
-. 
 end of do-file
+
+r(111);
 
 . do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
 
-. lassogof ols_levels ols_all if sample ==2
+. twoway line lminwage date, saving(minwage, replace)
+variable lminwage not found
+r(111);
 
-Penalized coefficients
--------------------------------------------------
-       Name |         MSE    R-squared        Obs
-------------+------------------------------------
- ols_levels |    1.059587       0.0499        450
-    ols_all |    1.186286      -0.0637        450
--------------------------------------------------
-
-. 
 end of do-file
+
+r(111);
 
 . do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
 
-. elasticnet linear lwage cont* dummy* interact* if sample==1, alpha (0) nolog rseed (1
-> 223)
+. gr combine emp.gph minwage.gph, col(1) iscale(1)
+file emp.gph not found
+r(601);
 
-Elastic net linear model                         No. of obs        =      1,050
-                                                 No. of covariates =         53
-Selection: Cross-validation                      No. of CV folds   =         10
-
--------------------------------------------------------------------------------
-               |                               No. of      Out-of-      CV mean
-               |                              nonzero       sample   prediction
-alpha       ID |     Description      lambda    coef.    R-squared        error
----------------+---------------------------------------------------------------
-0.000          |
-             1 |    first lambda    205.0223       53      -0.0032     .9524592
-            61 |   lambda before    .7718958       53       0.0523     .8997049
-          * 62 | selected lambda    .7033227       53       0.0524     .8996733
-            63 |    lambda after    .6408415       53       0.0524     .8996781
-           100 |     last lambda    .0205022       53       0.0337     .9173624
--------------------------------------------------------------------------------
-* alpha and lambda selected by cross-validation.
-
-. 
 end of do-file
+
+r(601);
 
 . do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
 
-. estimates store ridge_all
+. twoway line lemp_foot date, saving(emp, replace) 
+variable lemp_foot not found
+r(111);
 
-. 
 end of do-file
+
+r(111);
 
 . do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
 
-. lassogof ols_all ols_levels ridge_all if sample ==2
+. twoway line lminwage date, saving(minwage, replace)
+variable lminwage not found
+r(111);
 
-Penalized coefficients
--------------------------------------------------
-       Name |         MSE    R-squared        Obs
-------------+------------------------------------
-    ols_all |    1.186286      -0.0637        450
- ols_levels |    1.059587       0.0499        450
-  ridge_all |    1.057637       0.0517        450
--------------------------------------------------
-
-. 
 end of do-file
+
+r(111);
 
 . do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
 
-. elasticnet linear lwage cont1-cont2 dummy1-dummy9 if sample==1, alpha (0) nolog rseed
->  (1223)
+. gr combine emp.gph minwage.gph, col(1) iscale(1)
+file emp.gph not found
+r(601);
 
-Elastic net linear model                         No. of obs        =      1,050
-                                                 No. of covariates =         11
-Selection: Cross-validation                      No. of CV folds   =         10
-
--------------------------------------------------------------------------------
-               |                               No. of      Out-of-      CV mean
-               |                              nonzero       sample   prediction
-alpha       ID |     Description      lambda    coef.    R-squared        error
----------------+---------------------------------------------------------------
-0.000          |
-             1 |    first lambda     176.418       11      -0.0032     .9524592
-            78 |   lambda before    .1365941       11       0.0561      .896129
-          * 79 | selected lambda    .1244594       11       0.0561     .8961281
-            80 |    lambda after    .1134028       11       0.0561     .8961422
-           100 |     last lambda    .0176418       11       0.0551     .8970955
--------------------------------------------------------------------------------
-* alpha and lambda selected by cross-validation.
-
-. 
 end of do-file
+
+r(601);
 
 . do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
 
-. estimates store ridge_levels
+. twoway line lemp_foot date, saving(emp, replace) 
+variable lemp_foot not found
+r(111);
 
-. 
 end of do-file
 
-. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
-
-. lassogof ols_all ols_levels ridge_all ridge_levels if sample ==2
-
-Penalized coefficients
--------------------------------------------------
-       Name |         MSE    R-squared        Obs
-------------+------------------------------------
-    ols_all |    1.186286      -0.0637        450
- ols_levels |    1.059587       0.0499        450
-  ridge_all |    1.057637       0.0517        450
-ridge_levels|    1.056942       0.0523        450
--------------------------------------------------
-
-. 
-end of do-file
-
-. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
-
-. elasticnet linear lwage cont* dummy* interact* if sample==1, alpha (1) nolog rseed (1
-> 223)
-
-Elastic net linear model                         No. of obs        =      1,050
-                                                 No. of covariates =         53
-Selection: Cross-validation                      No. of CV folds   =         10
-
--------------------------------------------------------------------------------
-               |                               No. of      Out-of-      CV mean
-               |                              nonzero       sample   prediction
-alpha       ID |     Description      lambda    coef.    R-squared        error
----------------+---------------------------------------------------------------
-1.000          |
-             1 |    first lambda    .2050223        0      -0.0024       .95164
-            22 |   lambda before    .0290614        9       0.0523     .8997513
-          * 23 | selected lambda    .0264796        9       0.0526     .8994211
-            24 |    lambda after    .0241273        9       0.0526     .8994272
-            29 |     last lambda    .0151526       16       0.0498     .9020803
--------------------------------------------------------------------------------
-* alpha and lambda selected by cross-validation.
-
-. 
-end of do-file
-
-. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
-
-. estimates store lasso_all
-
-. 
-end of do-file
-
-. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
-
-. lassogof ols_all ols_levels ridge_all ridge_levels lasso_all if sample ==2
-
-Penalized coefficients
--------------------------------------------------
-       Name |         MSE    R-squared        Obs
-------------+------------------------------------
-    ols_all |    1.186286      -0.0637        450
- ols_levels |    1.059587       0.0499        450
-  ridge_all |    1.057637       0.0517        450
-ridge_levels|    1.056942       0.0523        450
-  lasso_all |    1.056924       0.0523        450
--------------------------------------------------
-
-. 
-end of do-file
-
-. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
-
-. lassocoef , display(coef)
-
-------------------------
-             | lasso_all
--------------+----------
-       cont1 |  .0271338
-      dummy2 | -.0387529
-      dummy6 | -.0241366
-      dummy7 | -.0232785
-  interact12 |  .1518034
-  interact18 |   .011654
-  interact21 |  .0246426
-  interact25 |  .0957434
-  interact26 |  .0261598
-       _cons |         0
-------------------------
-Legend:
-  b - base level
-  e - empty cell
-  o - omitted
-
-. 
-end of do-file
+r(111);
 
 . do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
 
@@ -380,4 +227,91 @@ end of do-file
 
 . 
 end of do-file
+
+. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
+
+. gen date = ym(year, month)
+
+. 
+end of do-file
+
+. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
+
+. label variable date "date in year-month format"
+
+. 
+end of do-file
+
+. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
+
+. help datetime
+
+. 
+end of do-file
+
+. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
+
+. format date %tm
+
+. 
+end of do-file
+
+. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
+
+. gen lminwage = log(minwage)
+
+. 
+end of do-file
+
+. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
+
+. gen lemp = log(emp_foot) 
+
+. 
+end of do-file
+
+. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
+
+. twoway line lemp_foot date, saving(emp, replace) 
+variable lemp_foot not found
+r(111);
+
+end of do-file
+
+r(111);
+
+. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
+
+. gen lemp_foot = log(emp_foot) 
+
+. 
+end of do-file
+
+. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
+
+. twoway line lemp_foot date, saving(emp, replace) 
+(file emp.gph not found)
+file emp.gph saved
+
+. 
+end of do-file
+
+. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
+
+. twoway line lminwage date, saving(minwage, replace)
+(file minwage.gph not found)
+file minwage.gph saved
+
+. 
+end of do-file
+
+. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
+
+. gr combine emp.gph minwage.gph, col(1) iscale(1)
+
+. 
+end of do-file
+
+. graph save "Graph" "/Users/gustaf/Documents/GitHub/EFI301-Assignments/Graph 9.3.gph"
+file /Users/gustaf/Documents/GitHub/EFI301-Assignments/Graph 9.3.gph saved
 

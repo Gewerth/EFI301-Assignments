@@ -224,10 +224,15 @@ use ts_minwage.dta
 gen date = ym(year, month)
 label variable date "date in year-month format"
 /*Open the data editor and check how the date is encoded. How are the numbers in date supposed to be interpreted? (Hint: help datetime). How would you advance all dates by one year? For the convenience of humans who look at the data, prettify how the date is displayed.*/
+help datetime
+/*The time is displayed relative to january 1960, i.e botth in positive and negative time...  */
 format date %tm
 /*Look again at date. What has changed?*/
+/*We now display time as yearmx, i.e. year followed by numerical month.*/
 
-/*	3. Define new variables lminwage and lemp foot corresponding to logged values of minwage and emp foot, respectively. Let's plot the two time series lemp foot and lminwage. We put them together into the same figure.*/
+/*	3. Define new variables lminwage and lemp foot corresponding to logged values of minwage and emp_foot, respectively. Let's plot the two time series lemp foot and lminwage. We put them together into the same figure.*/
+gen lminwage = log(minwage)
+gen lemp_foot = log(emp_foot) 
 twoway line lemp_foot date, saving(emp, replace) 
 twoway line lminwage date, saving(minwage, replace)
 gr combine emp.gph minwage.gph, col(1) iscale(1)
