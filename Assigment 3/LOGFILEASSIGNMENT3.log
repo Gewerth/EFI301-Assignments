@@ -367,3 +367,17 @@ Legend:
 . 
 end of do-file
 
+. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
+
+. clear 
+
+. 
+end of do-file
+
+. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
+
+. use ts_minwage.dta
+
+. 
+end of do-file
+

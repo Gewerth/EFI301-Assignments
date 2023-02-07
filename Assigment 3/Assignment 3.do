@@ -218,6 +218,8 @@ clear
 /*	1. Open the data in Stata. How is time encoded in the dataset?*/
 use ts_minwage.dta
 
+/* Two variables; month, int R[1-12] and year, int R[1947-1997].*/
+
 /*	2. We now encode time in one variable using the following commands.*/
 gen date = ym(year, month)
 label variable date "date in year-month format"
