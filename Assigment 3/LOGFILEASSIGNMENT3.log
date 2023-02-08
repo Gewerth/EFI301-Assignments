@@ -300,3 +300,151 @@ d_lemp_foo~j | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
 . 
 end of do-file
 
+. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
+
+. clear 
+
+. 
+end of do-file
+
+. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
+
+. use fatality long allyears.dta
+invalid 'long' 
+r(198);
+
+end of do-file
+
+r(198);
+
+. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
+
+. xtset state year
+no variables defined
+r(111);
+
+end of do-file
+
+r(111);
+
+. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
+
+. xtreg fr tax , fe
+variable fr not found
+r(111);
+
+end of do-file
+
+r(111);
+
+. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
+
+. use fatality long allyears.dta
+invalid 'long' 
+r(198);
+
+end of do-file
+
+r(198);
+
+. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
+
+. xtset state year
+no variables defined
+r(111);
+
+end of do-file
+
+r(111);
+
+. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
+
+. use fatality_long_allyears.dta
+
+. 
+end of do-file
+
+. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
+
+. xtset state year
+
+Panel variable: state (strongly balanced)
+ Time variable: year, 1982 to 1988
+         Delta: 1 unit
+
+. 
+end of do-file
+
+. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
+
+. xtreg fr tax , fe
+
+Fixed-effects (within) regression               Number of obs     =        336
+Group variable: state                           Number of groups  =         48
+
+R-squared:                                      Obs per group:
+     Within  = 0.0407                                         min =          7
+     Between = 0.1101                                         avg =        7.0
+     Overall = 0.0934                                         max =          7
+
+                                                F(1,287)          =      12.19
+corr(u_i, Xb) = -0.6885                         Prob > F          =     0.0006
+
+------------------------------------------------------------------------------
+          fr | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         tax |  -.6558737     .18785    -3.49   0.001    -1.025612   -.2861353
+       _cons |   2.377075   .0969699    24.51   0.000     2.186213    2.567937
+-------------+----------------------------------------------------------------
+     sigma_u |  .71471463
+     sigma_e |  .18985942
+         rho |  .93408484   (fraction of variance due to u_i)
+------------------------------------------------------------------------------
+F test that all u_i=0: F(47, 287) = 52.18                    Prob > F = 0.0000
+
+. 
+end of do-file
+
+. help xtreg
+
+. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
+
+. regress fr tax, fe vce(cluster state)
+option fe not allowed
+r(198);
+
+end of do-file
+
+r(198);
+
+. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
+
+. xtreg fr tax, fe vce(cluster state)
+
+Fixed-effects (within) regression               Number of obs     =        336
+Group variable: state                           Number of groups  =         48
+
+R-squared:                                      Obs per group:
+     Within  = 0.0407                                         min =          7
+     Between = 0.1101                                         avg =        7.0
+     Overall = 0.0934                                         max =          7
+
+                                                F(1,47)           =       5.05
+corr(u_i, Xb) = -0.6885                         Prob > F          =     0.0294
+
+                                 (Std. err. adjusted for 48 clusters in state)
+------------------------------------------------------------------------------
+             |               Robust
+          fr | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         tax |  -.6558737   .2918557    -2.25   0.029    -1.243012   -.0687359
+       _cons |   2.377075   .1497967    15.87   0.000     2.075723    2.678427
+-------------+----------------------------------------------------------------
+     sigma_u |  .71471463
+     sigma_e |  .18985942
+         rho |  .93408484   (fraction of variance due to u_i)
+------------------------------------------------------------------------------
+
+. 
+end of do-file
+

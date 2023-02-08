@@ -260,12 +260,13 @@ correlate lemp_foot l.lminwage
 
 /*	6. Explain the notion of a "spurious correlation" in the presence of trending time*/
 
-/*  ##TO DO## */
+/* Spurious correlation is coincidental correlation between two time series with trends. For instance there may be a correlation between womens skirt lenghts and financial booms, (or as it it turned out there wasn't one) */
 
-/*	7. From now on we consider first differences. This gets rid of trends and hopefully is a first step towards making our time series stationary. Plot the first difference D.lemp foot against time.*/
+/*	7. From now on we consider first differences. This gets rid of trends and hopefully is a first step towards making our time series stationary. Plot the first difference D.lemp_foot against time.*/
 twoway tsline D.lemp_foot
 
-/*	8. Labor markets often exhibit systematic fluctuations over the course of a year. This is called seasonality. We remove the seasonal component from the employment time series by using the following code.*/
+/*	8. Labor markets often exhibit systematic fluctuations over the course of a year. This is called seasonality.
+ We remove the seasonal component from the employment time series by using the following code.*/
 tab month , gen(m)
 reg D.lemp_foot m2-m12
 predict d_lemp_foot_adj , residuals
@@ -276,11 +277,10 @@ predict d_lemp_foot_adj , residuals
  From now on, we will use the seasonally adjusted time series. 
  Explain why a time series with a seasonal component cannot be stationary.
 */
-/*	The first line of this code creates new rows in the data set, with binary values depending on the month, i.e if row m1 is true the data is from january etc.
-As the name emplies, sesonaly adjusted time series, has had the sesonal component removed
+/*	The first line of this code creates new rows in the dataframe, with binary values depending on the month, i.e if row m1 is true the data is from january etc.
+As the name emplies, sesonaly adjusted time series, has had the sesonal component removed.
 
-If a time series has a sesonal component, it is time dependent, thus non-stationary
-	*/
+If a time series has a sesonal component, it is time dependent, thus non-stationary.*/
 
 /*9. Regress d_lemp_foot_adj on the first difference of the lagged minimum wage. Does the minimum wage today predict employment in footwear manufacturing tomorrow
 (α = 0.05, robust standard errors)?*/
@@ -296,7 +296,7 @@ d_lemp_foo~j | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
              |
        _cons |   9.90e-06   .0007962     0.01   0.990    -.0015538    .0015736
 ------------------------------------------------------------------------------*/
-/*	Sadly we have a result within the 95% confidence interval, hence we can't reject the null-hypothesis and say that minwage has an effect */
+/*	Sadly we have a result within the 95% confidence interval, hence we can't reject the null-hypothesis and say that lagged minwage has an effect on future manufacturing. */
 
 
 /*	10. Explain why, in a time series context, even (heteroscedasticity) robust standard errors may be incorrect. Compute auto-correlation robust standard errors (Newey- West) by using the following code.*/
@@ -310,18 +310,42 @@ d_lemp_foo~j | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
              |
        _cons |   9.90e-06   .0006682     0.01   0.988    -.0013023    .0013221
 ------------------------------------------------------------------------------*/
-
+/*	We don't have new entierly new information with every observation, therfore estimatioon error is dependent on what type of correlation there is between observations. See 11.5 in lecture notes.  	*/
 
 
 /*Problem 10*/
 clear 
-use fatality long allyears.dta
+use fatality_long_allyears.dta
+
 /*	1. We set up the data set as a panel data set and replicate the panel regression from the lecture.*/
 xtset state year
 xtreg fr tax , fe
-/* What is the numerical value of the t-statistic for the null hypothesis that tests the coefficient on fr against zero? Add the option vce(cluster state) to the fixed effect regression. What does it do? After adding the option you'll see a decrease in the realized absolute value of the t-statistic for the null hypothesis that tests the coefficient on fr against zero. Explain intuitively why this is expected.*/
+/* What is the numerical value of the t-statistic for the null hypothesis that tests the coefficient on fr against zero?
+ Add the option vce(cluster state) to the fixed effect regression. What does it do? After adding the option you'll see a decrease in the realized absolute value of the t-statistic for the null hypothesis that tests the coefficient on fr against zero. Explain intuitively why this is expected.*/
+ 
+/*------------------------------------------------------------------------------
+          fr | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         tax |  -.6558737     .18785    -3.49   0.001    -1.025612   -.2861353
+       _cons |   2.377075   .0969699    24.51   0.000     2.186213    2.567937
+-------------+----------------------------------------------------------------
+T-value is 3,49 for tax.  */
+xtreg fr tax, fe vce(cluster state)
+/* ------------------------------------------------------------------------------
+             |               Robust
+          fr | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         tax |  -.6558737   .2918557    -2.25   0.029    -1.243012   -.0687359
+       _cons |   2.377075   .1497967    15.87   0.000     2.075723    2.678427
+-------------+----------------------------------------------------------------*/
+/*The option vce(clustered varname), calculates the clustered-robust std.err. for a panel nested within the give variable.
+
+Since clustering accounts for the. correlation between time periods, which may not provide that much information, we adjust the standard error,  which in turn affects the t-value, which shrinks indicating that we are less sertain of the result.*/
+
 
 /*	2. Suppose that due to safer cars the fatality rate of road accidents decreases over time. In addition, suppose that state beer taxes tend to increase over time for unrelated reasons. Intuitively argue why we may overestimate the causal effect of the beer tax.*/
+
+/*Firstly our data will exhibit two trends, firstly in general we are told that road accidents decrease, secondly we aere told that the average tax of beer increases, in our model which only looks at beer and fatal accidents, we will se a large correlation, and that we would use to arge that there is causation, whilst in fact there isn't any just */
 
 /*	3. We now want to account explicitly for a time trend by including time dummies.*/
 tab year, generate(dummy_y)
