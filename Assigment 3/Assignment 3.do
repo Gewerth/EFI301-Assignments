@@ -3,9 +3,9 @@
 File header. Please fill in with the relevant information - the words in capital letters are placeholders.
 
 
-Name: Gustaf Lewerth, NAME2.
+Name: Gustaf Lewerth, Sebastian Tham.
 Content: ASSIGNMENT 3, 
-Date: 2023-Februari-DAY	
+Date: 2023-Februari-8	
 
 */
 
