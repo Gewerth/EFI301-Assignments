@@ -448,3 +448,207 @@ corr(u_i, Xb) = -0.6885                         Prob > F          =     0.0294
 . 
 end of do-file
 
+. clear
+
+. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
+
+. tab year, generate(dummy_y)
+no variables defined
+r(111);
+
+end of do-file
+
+r(111);
+
+. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
+
+. xtreg fr tax dummy_y2 -dummy_y7 , fe vce(cluster state)
+variable fr not found
+r(111);
+
+end of do-file
+
+r(111);
+
+. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
+
+. clear 
+
+. 
+end of do-file
+
+. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
+
+. use fatality_long_allyears.dta
+
+. 
+end of do-file
+
+. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
+
+. xtset state year
+
+Panel variable: state (strongly balanced)
+ Time variable: year, 1982 to 1988
+         Delta: 1 unit
+
+. 
+end of do-file
+
+. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
+
+. xtreg fr tax , fe
+
+Fixed-effects (within) regression               Number of obs     =        336
+Group variable: state                           Number of groups  =         48
+
+R-squared:                                      Obs per group:
+     Within  = 0.0407                                         min =          7
+     Between = 0.1101                                         avg =        7.0
+     Overall = 0.0934                                         max =          7
+
+                                                F(1,287)          =      12.19
+corr(u_i, Xb) = -0.6885                         Prob > F          =     0.0006
+
+------------------------------------------------------------------------------
+          fr | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         tax |  -.6558737     .18785    -3.49   0.001    -1.025612   -.2861353
+       _cons |   2.377075   .0969699    24.51   0.000     2.186213    2.567937
+-------------+----------------------------------------------------------------
+     sigma_u |  .71471463
+     sigma_e |  .18985942
+         rho |  .93408484   (fraction of variance due to u_i)
+------------------------------------------------------------------------------
+F test that all u_i=0: F(47, 287) = 52.18                    Prob > F = 0.0000
+
+. 
+end of do-file
+
+. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
+
+. xtreg fr tax, fe vce(cluster state)
+
+Fixed-effects (within) regression               Number of obs     =        336
+Group variable: state                           Number of groups  =         48
+
+R-squared:                                      Obs per group:
+     Within  = 0.0407                                         min =          7
+     Between = 0.1101                                         avg =        7.0
+     Overall = 0.0934                                         max =          7
+
+                                                F(1,47)           =       5.05
+corr(u_i, Xb) = -0.6885                         Prob > F          =     0.0294
+
+                                 (Std. err. adjusted for 48 clusters in state)
+------------------------------------------------------------------------------
+             |               Robust
+          fr | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         tax |  -.6558737   .2918557    -2.25   0.029    -1.243012   -.0687359
+       _cons |   2.377075   .1497967    15.87   0.000     2.075723    2.678427
+-------------+----------------------------------------------------------------
+     sigma_u |  .71471463
+     sigma_e |  .18985942
+         rho |  .93408484   (fraction of variance due to u_i)
+------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
+
+. tab year, generate(dummy_y)
+
+       Year |      Freq.     Percent        Cum.
+------------+-----------------------------------
+       1982 |         48       14.29       14.29
+       1983 |         48       14.29       28.57
+       1984 |         48       14.29       42.86
+       1985 |         48       14.29       57.14
+       1986 |         48       14.29       71.43
+       1987 |         48       14.29       85.71
+       1988 |         48       14.29      100.00
+------------+-----------------------------------
+      Total |        336      100.00
+
+. 
+end of do-file
+
+. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
+
+. xtreg fr tax dummy_y2 -dummy_y7 , fe vce(cluster state)
+
+Fixed-effects (within) regression               Number of obs     =        336
+Group variable: state                           Number of groups  =         48
+
+R-squared:                                      Obs per group:
+     Within  = 0.0803                                         min =          7
+     Between = 0.1101                                         avg =        7.0
+     Overall = 0.0876                                         max =          7
+
+                                                F(7,47)           =       4.36
+corr(u_i, Xb) = -0.6781                         Prob > F          =     0.0009
+
+                                 (Std. err. adjusted for 48 clusters in state)
+------------------------------------------------------------------------------
+             |               Robust
+          fr | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         tax |    -.63998   .3570784    -1.79   0.080    -1.358329     .078369
+    dummy_y2 |  -.0799029   .0350861    -2.28   0.027    -.1504869   -.0093188
+    dummy_y3 |  -.0724205   .0438809    -1.65   0.106    -.1606975    .0158564
+    dummy_y4 |  -.1239763   .0460559    -2.69   0.010    -.2166288   -.0313238
+    dummy_y5 |  -.0378645   .0570604    -0.66   0.510    -.1526552    .0769262
+    dummy_y6 |  -.0509021   .0636084    -0.80   0.428    -.1788656    .0770615
+    dummy_y7 |  -.0518038   .0644023    -0.80   0.425    -.1813645    .0777568
+       _cons |    2.42847   .2016885    12.04   0.000     2.022725    2.834215
+-------------+----------------------------------------------------------------
+     sigma_u |  .70945969
+     sigma_e |  .18788295
+         rho |  .93446373   (fraction of variance due to u_i)
+------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "/var/folders/gg/lz0sj7wn0c34cssljqqc9qpw0000gn/T//SD64760.000000"
+
+. xtreg fr tax i.year, fe vce(cluster state)
+
+Fixed-effects (within) regression               Number of obs     =        336
+Group variable: state                           Number of groups  =         48
+
+R-squared:                                      Obs per group:
+     Within  = 0.0803                                         min =          7
+     Between = 0.1101                                         avg =        7.0
+     Overall = 0.0876                                         max =          7
+
+                                                F(7,47)           =       4.36
+corr(u_i, Xb) = -0.6781                         Prob > F          =     0.0009
+
+                                 (Std. err. adjusted for 48 clusters in state)
+------------------------------------------------------------------------------
+             |               Robust
+          fr | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         tax |    -.63998   .3570784    -1.79   0.080    -1.358329     .078369
+             |
+        year |
+       1983  |  -.0799029   .0350861    -2.28   0.027    -.1504869   -.0093188
+       1984  |  -.0724205   .0438809    -1.65   0.106    -.1606975    .0158564
+       1985  |  -.1239763   .0460559    -2.69   0.010    -.2166288   -.0313238
+       1986  |  -.0378645   .0570604    -0.66   0.510    -.1526552    .0769262
+       1987  |  -.0509021   .0636084    -0.80   0.428    -.1788656    .0770615
+       1988  |  -.0518038   .0644023    -0.80   0.425    -.1813645    .0777568
+             |
+       _cons |    2.42847   .2016885    12.04   0.000     2.022725    2.834215
+-------------+----------------------------------------------------------------
+     sigma_u |  .70945969
+     sigma_e |  .18788295
+         rho |  .93446373   (fraction of variance due to u_i)
+------------------------------------------------------------------------------
+
+. 
+end of do-file
+

@@ -57,6 +57,7 @@ label values sample slabel
 /* A new variable has been created. What does this variable indicate? 
 Convince yourself that we have indeed sorted (at least approximately) 70% of the observations into the training subsample and 30% into the test subsample (Hint: Use tabulate*/
 tabulate sample
+/*This new variable is indivcating wether the observation is in the training or testing sample.*/
 
 /*	2. We first run an OLS regression on the levels of the continuous and the dummy variables using only the training data. We use the estimates store command to remember fitted regression models (Don't worry about the details here). */
 reg lwage cont1-cont2 dummy1-dummy9 if sample==1 
@@ -67,9 +68,9 @@ estimates store ols_all
  Explain what the wildcard operator (*) does. 
  What does dummy1-dummy9 mean?*/
 
-/* By stating that weonly wish to  use the samples, where the label is 1, i.e training.*/
-/* The wildcard "*" represetns one or two carachters, here it's the number at the end ov \textit{varname} */
-/* The "cont1-cont2 dummy1-dummy9" Stipulates which variables should be included, i.e cont1 & cont2 & dummy1 through dummy9. */
+/* By stating that we only wish to use the samples, where the variable "sample" is 1, i.e training.*/
+/* The wildcard "*" represetns one or two carachters, here it's the number at the end of \textit{varname} */
+/* The "cont1-cont2 dummy1-dummy9" Stipulates which variables should be included, i.e cont1 & cont2 and dummy1 through dummy9. */
 
 /*	3. We will now compute the training error of the two regressions.*/
 lassogof ols_levels ols_all if sample ==1
@@ -82,7 +83,6 @@ lassogof ols_levels ols_all if sample ==1
     ols_all |    .8108753       0.1459      1,050
 -------------------------------------------------
 */
-
 /*We could have told this simply by realising that the  ols_all model is more complex and would probably have greater precission at the cost of more bias*/
 
 /*	4. We will now compute the test error of the two regressions.*/
@@ -95,7 +95,7 @@ lassogof ols_levels ols_all if sample ==2
  ols_levels |    1.059587       0.0499        450
     ols_all |    1.186286      -0.0637        450
 -------------------------------------------------*/
-/* The ols_levels model now utperform the ols_all model. We see the effect of overfitting, i.e the model has to many variables with very little information gain, who all increase the bias and therfore makes our accuracy at ooutt of sample data much worse. */
+/* The ols_levels model now utperform the ols_all model. We see the effect of overfitting, i.e the model has to many variables with very little information gain, who all increase the bias and therfore makes our accuracy at out-of-sample data much worse. */
 
 /*	5. We now run a Ridge regression and compare it to the OLS regressions.*/ 
 elasticnet linear lwage cont* dummy* interact* if sample==1, alpha (0) nolog rseed (1223)
@@ -114,7 +114,8 @@ alpha       ID |     Description      lambda    coef.    R-squared        error
 
 estimates store ridge_all
 lassogof ols_all ols_levels ridge_all if sample ==2
-/*Ridge regression uses as many features as the OLS regression that regresses on all features. Why does Ridge regression still perform well on the test sample? (Hint: Shrinkage.)*/
+/*Ridge regression uses as many features as the OLS regression that regresses on all features. 
+Why does Ridge regression still perform well on the test sample? (Hint: Shrinkage.)*/
 /*-------------------------------------------------
        Name |         MSE    R-squared        Obs
 ------------+------------------------------------
@@ -122,10 +123,12 @@ lassogof ols_all ols_levels ridge_all if sample ==2
  ols_levels |    1.059587       0.0499        450
   ridge_all |    1.057637       0.0517        450
 -------------------------------------------------*/
-/*Well  you gave it away with the hint, simply, we get all the advantage of having a large and complex model, i.e. high precission, with the benefit of the small and simple model, i.e. less varinace, this makes the modell less overfitted on the training data.*/
+/*Well you gave it away with the hint, simply, we get all the advantage of having a large and complex model, i.e. high precission, with the benefits of the small and simple model, i.e. less varinace, this makes the modell less overfitted on the training data.*/
 
 
-/* 6. In addition to the Ridge regression above, run a second Ridge regression using only the levels of the predictors. For the two Ridge regressions, compare the lambda values selected by Stata. For which regression do we apply more shrinkage? Is this choice intuitive?*/
+/* 6. In addition to the Ridge regression above, run a second Ridge regression using only the levels of the predictors. For the two Ridge regressions, compare the lambda values selected by Stata.
+For which regression do we apply more shrinkage?
+Is this choice intuitive?*/
 elasticnet linear lwage cont1-cont2 dummy1-dummy9 if sample==1, alpha (0) nolog rseed (1223)
 /*-------------------------------------------------------------------------------
                |                               No. of      Out-of-      CV mean
@@ -139,7 +142,7 @@ alpha       ID |     Description      lambda    coef.    R-squared        error
             80 |    lambda after    .1134028       11       0.0561     .8961422
            100 |     last lambda    .0176418       11       0.0551     .8970955
 -------------------------------------------------------------------------------*/
-/* We see that the lamdas are smaller this time, that makes sense  given that we are  using fewer variables.*/
+/* We see that the lamdas are smaller this time, that makes sense  given that we are  using fewer variables, Thus less shrinkage when using fewer variables.*/
 
 estimates store ridge_levels
 lassogof ols_all ols_levels ridge_all ridge_levels if sample ==2
@@ -185,14 +188,13 @@ lassogof ols_all ols_levels ridge_all ridge_levels lasso_all if sample ==2
 ridge_levels|    1.056942       0.0523        450
   lasso_all |    1.056924       0.0523        450
 -------------------------------------------------*/
-/* What! lasso_all  is the best model!*/
+/* What! lasso_all is the best model!*/
 
 
 /*	8. Find out which variables were selected by the LASSO by using the following command.*/
 lassocoef , display(coef)
 /*Consider the following statement:
-	"The variables that are not selected by the LASSO (e.g. cont2 = age and cont2 	square = age2) probably do not have an economic effect on
-(log) wages."
+	"The variables that are not selected by the LASSO (e.g. cont2 = age and cont2 	square = age2) probably do not have an economic effect on (log) wages."
 Explain why this statement is wrong.*/
 /*------------------------
              | lasso_all
@@ -209,15 +211,13 @@ Explain why this statement is wrong.*/
        _cons |         0
 ------------------------*/
 
-
-/*HERE WE NEED A RESON FOR OUR ANSWER, I DON'T EXACTLY KNOW WHY*/
+/* LASSO weighs the information gain vs. the added variance, hence not selcting a variable doesn't mean that it doesn't have economic effect, it only means that this economic effect isn't strong relative to other variables. */
 
 
 /*Problem 9*/
 clear 
 /*	1. Open the data in Stata. How is time encoded in the dataset?*/
 use ts_minwage.dta
-
 /* Two variables; month, int R[1-12] and year, int R[1947-1997].*/
 
 /*	2. We now encode time in one variable using the following commands.*/
@@ -225,27 +225,27 @@ gen date = ym(year, month)
 label variable date "date in year-month format"
 /*Open the data editor and check how the date is encoded. How are the numbers in date supposed to be interpreted? (Hint: help datetime). How would you advance all dates by one year? For the convenience of humans who look at the data, prettify how the date is displayed.*/
 /*help datetime*/
-/*The time is displayed relative to january 1960, i.e botth in positive and negative time...  */
+/*The time is displayed relative to january 1960, i.e both in positive and negative time...  */
 format date %tm
 /*Look again at date. What has changed?*/
-/*We now display time as yearmx, i.e. year followed by numerical month.*/
+/*We now display time as yearmX, i.e. year followed by numerical month.*/
 
-/*	3. Define new variables lminwage and lemp foot corresponding to logged values of minwage and emp_foot, respectively. Let's plot the two time series lemp foot and lminwage. We put them together into the same figure.*/
+/*	3. Define new variables lminwage and lemp_foot corresponding to logged values of minwage and emp_foot, respectively. Let's plot the two time series lemp_foot and lminwage. We put them together into the same figure.*/
 gen lminwage = log(minwage)
 gen lemp_foot = log(emp_foot) 
 twoway line lemp_foot date, saving(emp, replace) 
 twoway line lminwage date, saving(minwage, replace)
 gr combine emp.gph minwage.gph, col(1) iscale(1)
 /*Do the time series exhibit (stochastic) trends?*/
-/* Yes, first plot has a negative derivative, and the second plot has a positive derivative */
+/* Yes, the first plot has a negative derivative, and the second plot has a positive derivative of time, meaning that they have trends. */
 
 /*	4. We now use */
 tsset date
 /*to tell Stata that we are using a time series and that date is the time index. This will allow us to use special commands such as the D. operator to refer to first differences and the L. operator to refer to lagged values. For example we can write L.lminwage to refer to the lagged values (i.e. the previous period's value) of lminwage.
 */
 
-/*	5. Compute the correlation between lemp_foot and the lagged value of lminwage (Hint: use the command cor and the L. operator). If we are interested in predicting the level of the minimum wage based on employment, why would we look at the correlation of employment with the lagged minimum wage rather than the
-contemporaneous (i.e. current period) minimum wage? (Hint: monthly data).*/
+/*	5. Compute the correlation between lemp_foot and the lagged value of lminwage (Hint: use the command cor and the L. operator). 
+If we are interested in predicting the level of the minimum wage based on employment, why would we look at the correlation of employment with the lagged minimum wage rather than the contemporaneous (i.e. current period) minimum wage? (Hint: monthly data).*/
 
 correlate lemp_foot l.lminwage 
 /*
@@ -256,7 +256,7 @@ correlate lemp_foot l.lminwage
     lminwage |
          L1. |  -0.8653   1.0000*/
 
-/* When employments are made, it's depending on salary at time of employment, i.e time before employment is made. An increases in wage will reduce the demand for employees, thus an increase in salary also increses suply of employees. Not the other way around, thus there is a time delay between wage and employment   */
+/* When employments are made, it's depending on salary at time of employment, i.e time before employment is made. An increases in wage will reduce the demand for employees, thus an increase in salary also increses suply of employees. Not the other way around, thus there is a time delay between wage and employment.   */
 
 /*	6. Explain the notion of a "spurious correlation" in the presence of trending time*/
 
@@ -271,14 +271,14 @@ tab month , gen(m)
 reg D.lemp_foot m2-m12
 predict d_lemp_foot_adj , residuals
 /*What does the first line of this piece of code do?
- The time series d lemp_foot adj is called seasonally adjusted.
+ The time series d lemp_foot_adj is called seasonally adjusted.
  Explain why the seasonally adjusted time series has no seasonal component 
  (i.e. it will not exhibit a predictable pattern of variation over the course of a year). 
  From now on, we will use the seasonally adjusted time series. 
  Explain why a time series with a seasonal component cannot be stationary.
 */
 /*	The first line of this code creates new rows in the dataframe, with binary values depending on the month, i.e if row m1 is true the data is from january etc.
-As the name emplies, sesonaly adjusted time series, has had the sesonal component removed.
+As the name emplies, sesonaly adjusted time series, has had the sesonal component removed by the first difference which removes trends,
 
 If a time series has a sesonal component, it is time dependent, thus non-stationary.*/
 
@@ -310,7 +310,7 @@ d_lemp_foo~j | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
              |
        _cons |   9.90e-06   .0006682     0.01   0.988    -.0013023    .0013221
 ------------------------------------------------------------------------------*/
-/*	We don't have new entierly new information with every observation, therfore estimatioon error is dependent on what type of correlation there is between observations. See 11.5 in lecture notes.  	*/
+/*	We don't have entierly new information with every new observation, therfore estimation error is dependent on what type of correlation there is between observations. See 11.5 in lecture notes.  	*/
 
 
 /*Problem 10*/
@@ -345,7 +345,7 @@ Since clustering accounts for the. correlation between time periods, which may n
 
 /*	2. Suppose that due to safer cars the fatality rate of road accidents decreases over time. In addition, suppose that state beer taxes tend to increase over time for unrelated reasons. Intuitively argue why we may overestimate the causal effect of the beer tax.*/
 
-/*Firstly our data will exhibit two trends, firstly in general we are told that road accidents decrease, secondly we aere told that the average tax of beer increases, in our model which only looks at beer and fatal accidents, we will se a large correlation, and that we would use to arge that there is causation, whilst in fact there isn't any just */
+/* Our data will exhibit two trends, firstly we are told that lethal road accidents decrease, secondly we are told that the average tax of beer increases, in our model which only looks at beer and fatal accidents, we will se a large correlation between the two, and that we would use to arge that there is causation, whilst in fact there isn't any just two trends at large.*/
 
 /*	3. We now want to account explicitly for a time trend by including time dummies.*/
 tab year, generate(dummy_y)
@@ -353,12 +353,47 @@ xtreg fr tax dummy_y2 -dummy_y7 , fe vce(cluster state)
 /*Is it true that there is a time trend of decreasing number of road accidents? Consider the following statement:
 	"If we observe that there is no decreasing time trend then we can just as well estimate the model without the time dummies. This will allow us to use the specification where tax is significant, rather than the specification where it is insignificant."
 Explain why this statement is incorrect (Hint: p-hacking).
+
+/*Choosing the data points where tax is significant will increase the valididty of your results, since you are picking observations wich prove the point you are trying to make, even if there are points where the data you are using is irrelevant. Thus your results will not be valid to the degree that you would beleive. */
 There is an easier way to add the time dummies to the regression.*/
+
+/*------------------------------------------------------------------------------
+             |               Robust
+          fr | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         tax |    -.63998   .3570784    -1.79   0.080    -1.358329     .078369
+    dummy_y2 |  -.0799029   .0350861    -2.28   0.027    -.1504869   -.0093188
+    dummy_y3 |  -.0724205   .0438809    -1.65   0.106    -.1606975    .0158564
+    dummy_y4 |  -.1239763   .0460559    -2.69   0.010    -.2166288   -.0313238
+    dummy_y5 |  -.0378645   .0570604    -0.66   0.510    -.1526552    .0769262
+    dummy_y6 |  -.0509021   .0636084    -0.80   0.428    -.1788656    .0770615
+    dummy_y7 |  -.0518038   .0644023    -0.80   0.425    -.1813645    .0777568
+       _cons |    2.42847   .2016885    12.04   0.000     2.022725    2.834215
+-------------+----------------------------------------------------------------*/
+
 xtreg fr tax i.year, fe vce(cluster state)
 /*Verify that this command yields the same estimation results as our previous
 approach.*/
-/*
-The time dummies that we included in the previous regression are called time fixed effects. Just like an individual or unit fixed effect has a constant effect (over all time periods) on a unit, a time fixed effect has a constant effect (for all units) on a time period. To write down a panel model with time and unit fixed effects we can write down for example
+/*------------------------------------------------------------------------------
+             |               Robust
+          fr | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         tax |    -.63998   .3570784    -1.79   0.080    -1.358329     .078369
+             |
+        year |
+       1983  |  -.0799029   .0350861    -2.28   0.027    -.1504869   -.0093188
+       1984  |  -.0724205   .0438809    -1.65   0.106    -.1606975    .0158564
+       1985  |  -.1239763   .0460559    -2.69   0.010    -.2166288   -.0313238
+       1986  |  -.0378645   .0570604    -0.66   0.510    -.1526552    .0769262
+       1987  |  -.0509021   .0636084    -0.80   0.428    -.1788656    .0770615
+       1988  |  -.0518038   .0644023    -0.80   0.425    -.1813645    .0777568
+             |
+       _cons |    2.42847   .2016885    12.04   0.000     2.022725    2.834215
+-------------+----------------------------------------------------------------*/
+/*The estimations are the same*/
+
+
+/*The time dummies that we included in the previous regression are called time fixed effects. Just like an individual or unit fixed effect has a constant effect (over all time periods) on a unit, a time fixed effect has a constant effect (for all units) on a time period. To write down a panel model with time and unit fixed effects we can write down for example
 		Y_t =α_t+β_1*X_1,t+...+β_k*X_k,t+A+U_t for t=1,...,T, 
 where αt is the time fixed effect for time period t and A is the individual or unit fixed effect.*/
 
